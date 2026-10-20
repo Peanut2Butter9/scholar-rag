@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ScholarRAG</title>
+<style>
+  :root {
+    --bg: #f7f7f5; --panel: #ffffff; --text: #1d1d1f; --muted: #6b6b70; --border: #e2e2de;
+    --accent: #2f5bd3; --accent-soft: #e8eefc; --ok: #1f7a4d; --warn: #9a5b00; --warn-soft: #fff4e0;
+    --mark: #fff1a8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #141416; --panel: #1d1d20; --text: #ececee; --muted: #9a9aa2; --border: #2e2e33;
+      --accent: #8aa8ff; --accent-soft: #22293d; --ok: #5ccf94; --warn: #f0b45a; --warn-soft: #2e2618;
+      --mark: #5a4f12;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+         font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 820px; margin: 0 auto; padding: 32px 16px 64px; }
+  h1 { font-size: 26px; margin: 0 0 4px; letter-spacing: -0.01em; }
+  .sub { color: var(--muted); margin: 0 0 24px; }
+  form { display: flex; gap: 8px; }
+  textarea { flex: 1; resize: vertical; min-height: 52px; padding: 12px 14px; font: inherit; color: var(--text);
+             background: var(--panel); border: 1px solid var(--border); border-radius: 10px; }
+  textarea:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  button { padding: 0 20px; font: inherit; font-weight: 600; color: #fff; background: var(--accent);
+           border: 0; border-radius: 10px; cursor: pointer; }
+  button:disabled { opacity: .55; cursor: default; }
+  .examples { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 28px; }
+  .chip { font-size: 13px; padding: 5px 10px; border-radius: 999px; border: 1px solid var(--border);
+          background: var(--panel); color: var(--muted); cursor: pointer; }
+  .chip:hover { color: var(--text); border-color: var(--accent); }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-bottom: 16px; }
+  .label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 8px; }
+  .answer { font-size: 17px; }
+  .ref { font-size: 12px; font-weight: 600; color: var(--accent); background: var(--accent-soft); border-radius: 5px;
+         padding: 1px 5px; margin-left: 3px; text-decoration: none; vertical-align: 1px; }
+  .refusal { background: var(--warn-soft); border-color: transparent; }
+  .refusal .answer { color: var(--warn); }
+  .cite { margin: 10px 0 0; padding-left: 12px; border-left: 3px solid var(--border); font-size: 14px; }
+  .cite .ok { color: var(--ok); font-weight: 600; }
+  .cite .bad { color: var(--warn); font-weight: 600; }
+  details { margin-top: 4px; }
+  summary { cursor: pointer; color: var(--muted); font-size: 14px; }
+  .passage { border-top: 1px solid var(--border); padding: 14px 0 4px; }
+  .passage:first-of-type { border-top: 0; }
+  .p-head { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+  .p-num { font-weight: 700; color: var(--accent); }
+  .p-title { font-weight: 600; color: var(--text); text-decoration: none; }
+  .p-title:hover { text-decoration: underline; }
+  .p-meta { font-size: 13px; color: var(--muted); }
+  .p-text { position: relative; font-size: 14px; color: var(--muted); margin: 6px 0 0; max-height: 9.5em; overflow: auto; }
+  mark { background: var(--mark); color: var(--text); border-radius: 3px; padding: 0 2px; }
+  .timings { font-size: 13px; color: var(--muted); }
+  .error { color: var(--warn); }
+  .status { color: var(--muted); font-size: 14px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>ScholarRAG</h1>
+  <p class="sub">Ask about 200 arXiv papers on visual anomaly detection. Every answer cites the passage it comes from, or says the papers don't contain it.</p>
+
+  <form id="form">
+    <textarea id="q" placeholder="e.g. Which two benchmark datasets are used to validate the Iterative Refinement Process (IRP)?" required minlength="3" maxlength="500"></textarea>
+    <button id="go" type="submit">Ask</button>
+  </form>
+  <div class="examples" id="examples"></div>
+
+  <div id="out"></div>
+</main>
+
+<script>
+const EXAMPLES = [
+  "Which two benchmark datasets are used to validate the Iterative Refinement Process (IRP)?",
+  "Is the footage in the UBnormal benchmark recorded by real cameras, or is it made some other way?",
+  "What auxiliary loss is minimized alongside the Real-NVP loss for visual anomaly detection on mobile robots?",
+  "How much GPU memory does Dinomaly need during training?",
+];
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
+
+for (const ex of EXAMPLES) {
+  const b = document.createElement("button");
+  b.type = "button"; b.className = "chip"; b.textContent = ex;
+  b.onclick = () => { $("q").value = ex; ask(); };
+  $("examples").appendChild(b);
+}
+$("form").onsubmit = (e) => { e.preventDefault(); ask(); };
+$("q").addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); ask(); }
+});
+
+// tandai kutipan di dalam teks passage (pencocokan tanpa beda huruf besar/kecil dan spasi)
+function highlight(text, quotes) {
+  const norm = (s) => s.toLowerCase().replace(/\s+/g, " ");
+  const t = norm(text);
+  const spans = [];
+  for (const q of quotes) {
+    const i = t.indexOf(norm(q).trim());
+    if (i >= 0) spans.push([i, i + norm(q).trim().length]);
+  }
+  spans.sort((a, b) => a[0] - b[0]);
+  let html = "", pos = 0;
+  for (const [a, b] of spans) {
+    if (a < pos) continue;
+    html += esc(text.slice(pos, a)) + "<mark>" + esc(text.slice(a, b)) + "</mark>";
+    pos = b;
+  }
+  return html + esc(text.slice(pos));
+}
+
+async function ask() {
+  const question = $("q").value.trim();
+  if (question.length < 3) return;
+  $("go").disabled = true;
+  const t0 = performance.now();
+  const tick = setInterval(() => {
+    $("out").innerHTML = `<p class="status">Searching 3,910 passages and reading the top 5… ${((performance.now() - t0) / 1000).toFixed(1)} s</p>`;
+  }, 100);
+  try {
+    const r = await fetch("/api/ask", {method: "POST", headers: {"Content-Type": "application/json"},
+                                       body: JSON.stringify({question})});
+    const data = await r.json();
+    clearInterval(tick);
+    if (!r.ok) throw new Error(data.detail ? (typeof data.detail === "string" ? data.detail : JSON.stringify(data.detail)) : r.statusText);
+    render(data);
+  } catch (err) {
+    clearInterval(tick);
+    $("out").innerHTML = `<div class="card"><p class="error">${esc(err.message)}</p></div>`;
+  } finally {
+    $("go").disabled = false;
+  }
+}
+
+function render(d) {
+  const quotesBy = {};
+  for (const c of d.citations) (quotesBy[c.passage] ||= []).push(c.quote);
+  let html = "";
+  if (d.answerable) {
+    const refs = [...new Set(d.citations.map((c) => c.passage))]
+      .map((n) => `<a class="ref" href="#p${n}">${n}</a>`).join("");
+    const cites = d.citations.map((c) => `
+      <div class="cite">“${esc(c.quote)}” <span class="ref">${c.passage}</span>
+        ${c.verified ? '<span class="ok">✓ verbatim</span>' : '<span class="bad">⚠ not found verbatim</span>'}</div>`).join("");
+    html += `<div class="card"><div class="label">Answer</div><div class="answer">${esc(d.answer)}${refs}</div>${cites}</div>`;
+  } else {
+    html += `<div class="card refusal"><div class="label">No answer</div>
+      <div class="answer">The papers don't state this. The closest passages are below.</div></div>`;
+  }
+  const passages = d.passages.map((p) => `
+    <div class="passage${p.cited ? " cited" : ""}" id="p${p.passage}">
+      <div class="p-head"><span class="p-num">[${p.passage}]</span>
+        <a class="p-title" href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.title)}</a></div>
+      <div class="p-meta">arXiv ${esc(p.paper_id)} · pages ${esc(p.pages)} · rerank ${p.rerank_score.toFixed(2)}${p.cited ? " · cited" : ""}</div>
+      <p class="p-text">${highlight(p.text, quotesBy[p.passage] || [])}</p>
+    </div>`).join("");
+  html += `<div class="card"><details ${d.answerable ? "" : "open"}><summary>Retrieved passages (${d.passages.length})</summary>${passages}</details></div>`;
+  const t = d.timings_s;
+  html += `<p class="timings">retrieval ${(t.dense + t.bm25).toFixed(2)} s · rerank ${t.rerank.toFixed(2)} s · LLM ${t.llm.toFixed(2)} s · total ${t.total.toFixed(2)} s · ${esc(d.model)}</p>`;
+  $("out").innerHTML = html;
+  // gulir kotak teks passage ke kutipan pertama supaya highlight langsung terlihat
+  const scrollToMarks = () => document.querySelectorAll(".p-text").forEach((box) => {
+    const m = box.querySelector("mark");
+    if (m) box.scrollTop = m.offsetTop - 8;
+  });
+  document.querySelector("details").addEventListener("toggle", scrollToMarks);
+  scrollToMarks();
+}
+</script>
+</body>
+</html>

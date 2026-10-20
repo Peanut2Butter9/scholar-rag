@@ -37,7 +37,7 @@ Current pipeline: BM25 top 10 ∪ dense top 10, reranked by `bge-reranker-base`;
 | M3 | Hybrid search (RRF) + cross-encoder reranker | ✅ BM25 ∪ dense top 10 → `bge-reranker-base` (level with BM25 on set A, far ahead on set B1) |
 | M4 | Answers with citations and refusal | ✅ Gemini, verified quotes; 20 / 20 unanswerable refused |
 | M5 | Answer evaluation (citations, refusals, cost, latency) | 🔧 in progress: set C and latency done, LLM judge 13 / 79 (free-tier quota) |
-| M6 | FastAPI + UI, deployment | ⏳ |
+| M6 | FastAPI + UI, deployment | 🔧 local API + web UI done (`src/app.py`); public deployment pending |
 
 ## Results so far
 
@@ -217,6 +217,22 @@ The project runs locally (VS Code, Python 3.12) from `~/Projects/scholar-rag`, o
 | `04_answers_citations.ipynb` | M4: retrieval → Gemini answers with citations or refusal, citation checks. Needs `GEMINI_API_KEY`; contexts and answers are cached, so a re-run does not call the LLM again |
 | `05_evaluation.ipynb` | M5: out-of-corpus refusal (set C), LLM judge of answer correctness, blind manual sample, refusal accuracy, cost and latency. Resumable: stops cleanly when the judge's daily quota runs out |
 
+### Web app (M6)
+
+Ask questions in the browser, with answers, verified citations and the retrieved passages:
+
+```bash
+.venv/bin/uvicorn app:app --app-dir src --port 8000
+```
+
+Then open <http://localhost:8000>. Startup loads the embedding model, BM25 index and reranker (about 20 s); each question then takes about 5–9 s on an M1 (rerank 2–5 s, Gemini 1–3 s). Needs `GEMINI_API_KEY` in `.env` and the data and index files in `data/`.
+
+| Endpoint | |
+|---|---|
+| `POST /api/ask` | `{"question": "..."}` → `answerable`, `answer`, `citations` (passage number, quote, `verified`), the 5 `passages` (title, arXiv link, pages, rerank score, text) and `timings_s` |
+| `GET /api/health` | Status, number of indexed chunks, answer model and prompt version |
+| `GET /` | The web UI (`src/static/index.html`) |
+
 The final pipeline (retrieval, prompt, citation check) is also packaged in `src/rag.py`, with the same settings as notebooks 03–04 (verified: identical prompt, identical top-5 chunks). Notebook 05 uses it, and the API (M6) will.
 
 1. **Environment:** `uv venv --python 3.12 .venv`, then `uv pip install --python .venv/bin/python -r requirements.txt`, then register the kernel with `.venv/bin/python -m ipykernel install --user --name scholar-rag`. Python 3.15 is too new for `torch`.
@@ -237,9 +253,10 @@ Main dependencies: `arxiv`, `pymupdf`, `sentence-transformers`, `rank_bm25`, `sc
 - **Lost content.** Tables, equations and very short text blocks are dropped during parsing.
 - **Heuristic cleaning.** A few bibliography fragments may remain (~3.5% of chunks match a citation pattern, some of them legitimate).
 - **Small evaluation set.** With 64 questions, one question ≈ 1.6 percentage points, so differences of 2–3 points are noise. With the 15 handwritten questions, one question ≈ 6.7 points.
+- **Borderline near-miss question.** hu017 asks how much GPU memory Dinomaly needs for training; the paper only says it ran on RTX3090 GPUs (24GB). The capacity is not the requirement, so the question stays unanswerable, but an answer citing "24GB" would not be plainly wrong. Reword it in `questions_handwritten_v2.csv`.
 - **Partly LLM-assisted set B.** Several handwritten questions were reworded with help from Claude and then rewritten by the author (earlier versions in `data/_backup/`); unanswerable questions were checked against the full PDF text by keyword search, which is strong evidence but not proof.
 
 ## Next steps
 
 1. **M5:** judge answer correctness against the gold answer and the cited passages (manual sample + LLM judge), allowing "correct but different from gold" when the quote supports it; refusal accuracy on harder unanswerable questions (e.g. the 12 in `unanswerable_candidates.csv`); cost and latency per question.
-2. **M6:** FastAPI endpoint, simple UI, public demo. Reranking takes ~3 s per question on an M1, so the demo needs fewer pairs, half precision or a GPU.
+2. **M6 deployment:** host the API and UI publicly. Needs about 2 GB of RAM for the models, the `data/` index files and the API key as a server secret; reranking takes 2–5 s per question on an M1, so a public demo needs fewer pairs, half precision or a GPU, plus a rate limit to protect the Gemini quota.

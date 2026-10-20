@@ -15,3 +15,5 @@ ipykernel
 ipywidgets
 nbclient
 nbformat
+fastapi
+uvicorn[standard]

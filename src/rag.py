@@ -113,13 +113,13 @@ def call_with_retry(fn, tries=5, wait=20):
             raise
 
 
-def answer(client, ch, question, idxs, model=ANSWER_MODEL):
+def answer(client, ch, question, idxs, model=ANSWER_MODEL, tries=5):
     from google.genai import types
     config = types.GenerateContentConfig(system_instruction=SYSTEM, temperature=0,
                                          response_mime_type="application/json", response_schema=Answer)
     t0 = time.perf_counter()
     r = call_with_retry(lambda: client.models.generate_content(model=model, contents=build_prompt(ch, question, idxs),
-                                                               config=config))
+                                                               config=config), tries=tries)
     u = r.usage_metadata
     return {"model": model, "prompt_version": PROMPT_VERSION,
             "parsed": r.parsed.model_dump() if r.parsed is not None else None, "raw": r.text,
