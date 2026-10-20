@@ -1,0 +1,17 @@
+arxiv
+pymupdf
+sentence-transformers
+rank_bm25
+scikit-learn
+pandas
+numpy
+requests
+chromadb
+anthropic
+google-genai
+pydantic
+python-dotenv
+ipykernel
+ipywidgets
+nbclient
+nbformat
