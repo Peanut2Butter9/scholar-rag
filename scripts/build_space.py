@@ -35,6 +35,8 @@ short_description: Recorded demo of cited answers from 200 AD papers
 Retrieval-augmented question answering over 200 arXiv papers on visual anomaly detection. Each answer cites the passage it comes from, with the quote checked against the source, or the system says the papers don't contain the answer.
 
 This Space replays answers recorded from the live system (FastAPI + `bge-small-en-v1.5` / BM25 retrieval, `bge-reranker-base`, Gemini `gemini-3.5-flash-lite`); it makes no model calls. The "About" panel on the page lists the evaluation results.
+
+Code, notebooks and the full evaluation: https://github.com/Peanut2Butter9/scholar-rag
 """
 
 # hanya file yang dibutuhkan server; PDF dan file eksperimen tidak ikut

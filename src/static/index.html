@@ -140,7 +140,7 @@ if (DEMO) {
   $("broadenRow").style.display = "none";
   $("demoBanner").hidden = false;
   $("footnote").textContent = "By Moh Hasbi Alfarizi. This recorded demo sends nothing to any service. Passages are short excerpts; follow the paper titles to read the full papers on arXiv.";
-  $("demoBanner").innerHTML = `<strong>Recorded demo.</strong> The answers below were produced by the live system on ${esc(DEMO.recorded)} and are replayed here; this page makes no model calls. Gemini was slow that day, so the times shown are longer than usual. Pick a question to see its answer, citations and retrieved passages.`;
+  $("demoBanner").innerHTML = `<strong>Recorded demo.</strong> The answers below were produced by the live system on ${esc(DEMO.recorded)} and are replayed here; this page makes no model calls. Gemini was slow that day, so the times shown are longer than usual. Pick a question to see its answer, citations and retrieved passages. Code and evaluation: <a href="https://github.com/Peanut2Butter9/scholar-rag" target="_blank" rel="noopener">github.com/Peanut2Butter9/scholar-rag</a>.`;
   const play = (i) => {
     const it = DEMO.items[i];
     render(it.response, `<p class="qline"><span class="tag">${esc(it.label)}</span>${esc(it.question)}</p>`);
