@@ -6,7 +6,7 @@ ScholarRAG answers questions about a corpus of 200 arXiv papers on **visual anom
 
 The current stage builds the foundation everything else is measured against: the corpus, chunked text, two evaluation question sets, and baseline retrieval scores for dense and keyword search.
 
-**Author:** Moh Hasbi Alfarizi
+**Author:** Moh Hasbi Alfarizi · **Recorded demo:** <https://huggingface.co/spaces/peanut2butter9/scholarrag>
 
 ---
 
@@ -37,7 +37,7 @@ Current pipeline: BM25 top 10 ∪ dense top 10, reranked by `bge-reranker-base`;
 | M3 | Hybrid search (RRF) + cross-encoder reranker | ✅ BM25 ∪ dense top 10 → `bge-reranker-base` (level with BM25 on set A, far ahead on set B1) |
 | M4 | Answers with citations and refusal | ✅ Gemini, verified quotes; 20 / 20 unanswerable refused |
 | M5 | Answer evaluation (citations, refusals, cost, latency) | ✅ acceptable 0.92 (A) / 0.93 (B1), 0 incorrect, no hallucinated refusals |
-| M6 | FastAPI + UI, deployment | ✅ API + web UI, tests, rate limit, Hugging Face Space bundle · ⏳ upload to a Space (needs your account) |
+| M6 | FastAPI + UI, deployment | ✅ API + web UI, tests, rate limit · ✅ recorded demo on a static Space · live Space ready but needs Hugging Face PRO |
 
 ## Results so far
 
@@ -276,16 +276,29 @@ The pipeline (retrieval, prompt, citation check, optional rewriting) lives in `s
 
 `tests/test_app.py` checks the API with a fake retriever and fake Gemini calls (no models, no quota): verified and unverified citations, refusals, broaden search, input validation, rate limits and excerpts.
 
-### Deploy to Hugging Face Spaces
+### Online demo (Hugging Face Spaces)
 
-The demo runs on a free CPU Space (Docker). `scripts/build_space.py` assembles `dist/space/` with the Dockerfile (`deploy/Dockerfile`), the server code, the pinned `requirements-app.txt` and the 15 MB of data the server needs (chunks and the cached embeddings; no PDFs). The image downloads both models at build time.
+**Recorded demo: <https://huggingface.co/spaces/peanut2butter9/scholarrag>** (static, free, always on).
 
-1. Create a Hugging Face account, then log in on this machine: `.venv/bin/hf auth login` (paste a token with write access).
-2. Build and upload: `.venv/bin/python scripts/build_space.py --push YOUR_USERNAME/scholarrag` (creates the Space if it does not exist).
-3. In the Space, open **Settings → Variables and secrets** and add the secret `GEMINI_API_KEY`. The key is never uploaded with the files.
-4. Wait for the build (about 5–10 minutes the first time), then open the Space URL.
+Hugging Face hosts Docker and Gradio Spaces on its free CPU only for PRO accounts (checked Oct 2026), so the public demo is a **static Space that replays real answers**: `scripts/record_demo.py` asks a running server 11 questions (specific, paraphrased, near-miss, out of corpus, and a broad question with and without Broaden search) and saves the responses unchanged to `deploy/demo_recordings.json`; the same web UI then replays them without a server or model calls, under a "Recorded demo" banner. One recording shows the citation check at work: Gemini dropped a parenthesis from a quote, and the UI flags it as not verbatim.
 
-Free Spaces go to sleep after a period without visits and take a minute or two to wake up, so open the link a few minutes before presenting. If the Space is down, run the app locally as above.
+To re-record (for example on a day Gemini is faster) and re-upload:
+
+```bash
+RATE_LIMIT_PER_MINUTE=100 .venv/bin/uvicorn app:app --app-dir src --port 8000   # in one terminal
+.venv/bin/python scripts/record_demo.py                                          # in another
+.venv/bin/python scripts/build_space.py --static --push peanut2butter9/scholarrag
+```
+
+Uploading needs a Hugging Face login on this machine (`.venv/bin/hf auth login`).
+
+**Live app on a Space (needs Hugging Face PRO).** Everything is ready: `scripts/build_space.py` (without `--static`) assembles `dist/space/` with the Dockerfile (`deploy/Dockerfile`), the server code, the pinned `requirements-app.txt` and the 15 MB of data the server needs (no PDFs); the image downloads both models at build time. With a PRO account: run `.venv/bin/python scripts/build_space.py --push USER/SPACE`, then add the secret `GEMINI_API_KEY` under **Settings → Variables and secrets** (the key is never uploaded with the files) and wait 5–10 minutes for the first build. The Dockerfile has not been built yet, since Docker is not installed on the development machine.
+
+### Presenting it
+
+1. Before the interview, start the live app locally (`.venv/bin/uvicorn app:app --app-dir src --port 8000`, ready in about 20 s) and ask one question to warm up Gemini.
+2. Show the **About** panel for the pipeline and evaluation, then a specific question, a near-miss refusal and a broad question with Broaden search.
+3. If the laptop, the network or Gemini fails, switch to the recorded demo link above.
 
 ## Known limitations
 
@@ -309,4 +322,4 @@ Free Spaces go to sleep after a period without visits and take a minute or two t
    - **Source diversity:** cap retrieved passages at one chunk per paper (or use maximal marginal relevance), so the context covers more papers.
    - **Overview mode:** for broad questions, retrieve 10–15 passages from different papers and use a prompt that summarises across papers with a citation per claim. Costs more latency and tokens; needs a few overview questions in the evaluation sets.
    - Check that set A and B1 scores do not drop.
-3. **Publish the demo:** the Space bundle, Dockerfile, pinned requirements and rate limit are ready; what is left is creating the Space under your account, uploading (`scripts/build_space.py --push`) and adding the `GEMINI_API_KEY` secret (see *Deploy to Hugging Face Spaces*). Optionally record a short demo video as a fallback for presentations.
+3. **Live hosting (optional):** the Docker Space bundle is ready for a Hugging Face PRO account; free alternatives with enough memory (about 2 GB) need a payment card on file (Google Cloud Run) or a self-managed VM. A short screen recording would add a second fallback for presentations.

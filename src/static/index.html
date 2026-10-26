@@ -71,6 +71,9 @@
   .about ul { margin: 6px 0 0; padding-left: 18px; }
   .hint { margin: 10px 0 0; font-size: 14px; color: var(--text); }
   .searched { font-size: 14px; color: var(--muted); margin: 0 0 12px; }
+  .demo-banner { background: var(--accent-soft); border-radius: 10px; padding: 12px 16px; margin: 0 0 20px; font-size: 14px; }
+  .tag { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--accent); margin-right: 6px; }
+  .qline { font-size: 15px; margin: 0 0 12px; }
   .footnote { margin-top: 40px; font-size: 13px; color: var(--muted); border-top: 1px solid var(--border); padding-top: 14px; }
 </style>
 </head>
@@ -78,6 +81,8 @@
 <main>
   <h1>ScholarRAG</h1>
   <p class="sub">Ask about 200 arXiv papers on visual anomaly detection. Every answer cites the passage it comes from, or says the papers don't contain it.</p>
+
+  <div class="demo-banner" id="demoBanner" hidden></div>
 
   <details class="about">
     <summary>About this demo and its evaluation results</summary>
@@ -114,7 +119,7 @@
 
   <div id="out"></div>
 
-  <p class="footnote">By Moh Hasbi Alfarizi. Questions are sent to Google Gemini on its free tier, which Google may use to improve its products, so please don't enter personal information. Passages are short excerpts; follow the paper titles to read the full papers on arXiv.</p>
+  <p class="footnote" id="footnote">By Moh Hasbi Alfarizi. Questions are sent to Google Gemini on its free tier, which Google may use to improve its products, so please don't enter personal information. Passages are short excerpts; follow the paper titles to read the full papers on arXiv.</p>
 </main>
 
 <script>
@@ -127,16 +132,33 @@ const EXAMPLES = [
 ];
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
+// mode replay: halaman statis yang memutar jawaban rekaman (disisipkan oleh scripts/build_space.py --static)
+const DEMO = window.SCHOLARRAG_DEMO || null;
 
-for (const ex of EXAMPLES) {
-  const b = document.createElement("button");
-  b.type = "button"; b.className = "chip"; b.textContent = ex;
-  b.onclick = () => { $("q").value = ex; ask(); };
-  $("examples").appendChild(b);
+if (DEMO) {
+  $("form").style.display = "none";   // atribut hidden kalah oleh CSS display:flex
+  $("broadenRow").style.display = "none";
+  $("demoBanner").hidden = false;
+  $("footnote").textContent = "By Moh Hasbi Alfarizi. This recorded demo sends nothing to any service. Passages are short excerpts; follow the paper titles to read the full papers on arXiv.";
+  $("demoBanner").innerHTML = `<strong>Recorded demo.</strong> The answers below were produced by the live system on ${esc(DEMO.recorded)} and are replayed here; this page makes no model calls. Gemini was slow that day, so the times shown are longer than usual. Pick a question to see its answer, citations and retrieved passages.`;
+  DEMO.items.forEach((it) => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "chip";
+    b.innerHTML = `<span class="tag">${esc(it.label)}</span>${esc(it.question)}`;
+    b.onclick = () => render(it.response, `<p class="qline"><span class="tag">${esc(it.label)}</span>${esc(it.question)}</p>`);
+    $("examples").appendChild(b);
+  });
+} else {
+  for (const ex of EXAMPLES) {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "chip"; b.textContent = ex;
+    b.onclick = () => { $("q").value = ex; ask(); };
+    $("examples").appendChild(b);
+  }
+  // sembunyikan opsi broaden kalau server mematikannya
+  fetch("/api/health").then((r) => r.json()).then((h) => { if (!h.broaden_available) $("broadenRow").style.display = "none"; }).catch(() => {});
 }
 $("form").onsubmit = (e) => { e.preventDefault(); ask(); };
-// sembunyikan opsi broaden kalau server mematikannya
-fetch("/api/health").then((r) => r.json()).then((h) => { if (!h.broaden_available) $("broadenRow").style.display = "none"; }).catch(() => {});
 $("q").addEventListener("keydown", (e) => {
   if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); ask(); }
 });
@@ -185,10 +207,10 @@ async function ask() {
   }
 }
 
-function render(d) {
+function render(d, prefix = "") {
   const quotesBy = {};
   for (const c of d.citations) (quotesBy[c.passage] ||= []).push(c.quote);
-  let html = d.search_query ? `<p class="searched">Searched for: <em>${esc(d.search_query)}</em></p>` : "";
+  let html = prefix + (d.search_query ? `<p class="searched">Searched for: <em>${esc(d.search_query)}</em></p>` : "");
   if (d.answerable) {
     const refs = [...new Set(d.citations.map((c) => c.passage))]
       .map((n) => `<a class="ref" href="#p${n}">${n}</a>`).join("");
@@ -199,7 +221,7 @@ function render(d) {
   } else {
     html += `<div class="card refusal"><div class="label">No answer</div>
       <div class="answer">The papers don't state this. The closest passages are below.</div>
-      <p class="hint">Tip: name the topic precisely (for example "…in medical images such as brain MRI")${d.search_query ? "" : ", or tick Broaden search"}.</p></div>`;
+      <p class="hint">Tip: name the topic precisely (for example "…in medical images such as brain MRI")${d.search_query || DEMO ? "" : ", or tick Broaden search"}.</p></div>`;
   }
   const passages = d.passages.map((p) => `
     <div class="passage${p.cited ? " cited" : ""}" id="p${p.passage}">

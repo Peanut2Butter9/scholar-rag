@@ -1,0 +1,981 @@
+{
+ "recorded": "2026-10-26",
+ "items": [
+  {
+   "label": "Specific question",
+   "question": "Which two benchmark datasets are used to validate the Iterative Refinement Process (IRP)?",
+   "broaden": false,
+   "response": {
+    "question": "Which two benchmark datasets are used to validate the Iterative Refinement Process (IRP)?",
+    "search_query": null,
+    "answerable": true,
+    "answer": "The two benchmark datasets used to validate the Iterative Refinement Process (IRP) are Kolektor SDD2 (KSDD2) and MVTec-AD.",
+    "citations": [
+     {
+      "passage": 1,
+      "quote": "We validate the effectiveness of the IRP using two benchmark datasets, Kolektor SDD2 (KSDD2) and MVTec-AD",
+      "verified": true
+     }
+    ],
+    "citations_valid": true,
+    "passages": [
+     {
+      "passage": 1,
+      "chunk_id": "2408.11561v2_c0000",
+      "paper_id": "2408.11561v2",
+      "title": "Self-Supervised Iterative Refinement for Anomaly Detection in Industrial Quality Control",
+      "pages": "1",
+      "url": "https://arxiv.org/abs/2408.11561v2",
+      "text": "… accuracy by employing a cyclic data refinement strategy that iteratively removes misleading data points, thereby improving model performance and robustness. We validate the effectiveness of the IRP using two benchmark datasets, Kolektor SDD2 (KSDD2) and MVTec-AD, covering a wide range of industrial products and defect types. Our experimental results demonstrate that the IRP consistently outperforms traditional anomaly detection models, particularly in environments with high noise levels. This study highlights the potential of IRP to significantly enhance anomaly detection processes in …",
+      "truncated": true,
+      "rerank_score": 1.0,
+      "cited": true
+     },
+     {
+      "passage": 2,
+      "chunk_id": "2205.06568v1_c0003",
+      "paper_id": "2205.06568v1",
+      "title": "Self-Supervised Masking for Unsupervised Anomaly Detection and Localization",
+      "pages": "1-2",
+      "url": "https://arxiv.org/abs/2205.06568v1",
+      "text": "progressive mask reﬁnement approach is introduced to improve inference efﬁciency (Figure 1 (b)). SSM starts with a pair of complementary checkered masks, which jointly determine an initial mask according to the reconstruction results. The masks are iteratively reﬁned and shrunk to the likely anomaly regions based on the reconstruction errors. Figure 2 JOURNAL OF LATEX CLASS FILES, JULY 2021 2 Fig. 1: The overview of SSM. (a) During training, SSM leverages a conditional autoencoder to reconstruct the training images under …",
+      "truncated": true,
+      "rerank_score": 0.994,
+      "cited": false
+     },
+     {
+      "passage": 3,
+      "chunk_id": "2408.11561v2_c0016",
+      "paper_id": "2408.11561v2",
+      "title": "Self-Supervised Iterative Refinement for Anomaly Detection in Industrial Quality Control",
+      "pages": "9",
+      "url": "https://arxiv.org/abs/2408.11561v2",
+      "text": "Refinement Process (IRP) across varying noise levels underscores its potential utility in industrial settings, where defect patterns may be unpredictable. The model’s ability to maintain high AUROC values under increasing noise conditions illustrates its capacity to effectively distinguish subtle defect features from normal variability, which is an essential attribute for critical quality control environments. While the model demonstrates strong perfor- mance, there is scope to enhance its operational efficiency. The current training setup, designed for moderate scale and tailored to …",
+      "truncated": true,
+      "rerank_score": 0.742,
+      "cited": false
+     },
+     {
+      "passage": 4,
+      "chunk_id": "2408.11561v2_c0009",
+      "paper_id": "2408.11561v2",
+      "title": "Self-Supervised Iterative Refinement for Anomaly Detection in Industrial Quality Control",
+      "pages": "5",
+      "url": "https://arxiv.org/abs/2408.11561v2",
+      "text": "not only enhances the quality and performance of the model but also stabilizes it at an optimal level. Moreover, this method is designed not only to detect but also localize anomalies within images, leveraging the gradient of the loss function to clearly demarcate regions contributing to anomalies, thus providing a robust mechanism for practical deployment in industrial quality control systems. This section presents the experimental results obtained from applying the Iterative Refinement Process (IRP) to anomaly detection. The experiments were …",
+      "truncated": true,
+      "rerank_score": 0.724,
+      "cited": false
+     },
+     {
+      "passage": 5,
+      "chunk_id": "2408.11561v2_c0017",
+      "paper_id": "2408.11561v2",
+      "title": "Self-Supervised Iterative Refinement for Anomaly Detection in Industrial Quality Control",
+      "pages": "9-10",
+      "url": "https://arxiv.org/abs/2408.11561v2",
+      "text": "The pronounced resilience in classes with intricate defect patterns, such as Screws and Cables, underscores the model’s sophisticated feature recognition capabilities, which are likely bolstered by advanced data preprocessing and anomaly scoring mechanisms. Further research could focus on optimizing the model to enhance detection accuracy in scenarios with extremely subtle defect signals, such as those found in high-grade pharmaceutical manufacturing. Future research efforts might also refine the probabilistic models used within the IRP, enhancing their sensitivity to minor anomalies and …",
+      "truncated": true,
+      "rerank_score": 0.624,
+      "cited": false
+     }
+    ],
+    "timings_s": {
+     "dense": 0.85,
+     "bm25": 0.02,
+     "rerank": 2.27,
+     "llm": 8.08,
+     "total": 11.25
+    },
+    "model": "gemini-3.5-flash-lite"
+   }
+  },
+  {
+   "label": "Paraphrased question",
+   "question": "Is the footage in the UBnormal benchmark recorded by real cameras, or is it made some other way?",
+   "broaden": false,
+   "response": {
+    "question": "Is the footage in the UBnormal benchmark recorded by real cameras, or is it made some other way?",
+    "search_query": null,
+    "answerable": true,
+    "answer": "The footage in the UBnormal benchmark is generated using the Cinema4D software, combining virtual animated characters and objects with real-world 2D background images.",
+    "citations": [
+     {
+      "passage": 2,
+      "quote": "The UBnormal benchmark is generated using the Cinema4D software, which allows us to create scenes using 2D background images and 3D animations.",
+      "verified": true
+     },
+     {
+      "passage": 4,
+      "quote": "Our scenes are generated in Cinema4D using virtual animated characters and objects that are placed in realworld backgrounds",
+      "verified": true
+     }
+    ],
+    "citations_valid": true,
+    "passages": [
+     {
+      "passage": 1,
+      "chunk_id": "2111.08644v3_c0000",
+      "paper_id": "2111.08644v3",
+      "title": "UBnormal: New Benchmark for Supervised Open-Set Video Anomaly Detection",
+      "pages": "1",
+      "url": "https://arxiv.org/abs/2111.08644v3",
+      "text": "UBnormal: New Benchmark for Supervised Open-Set Video Anomaly Detection Andra Acsintoae1,∗, Andrei Florescu1,∗, Mariana-Iuliana Georgescu1,2,3,∗, Tudor Mare3,*, Paul Sumedrea1,∗, Radu Tudor Ionescu1,3,⋄, Fahad Shahbaz Khan2,4, Mubarak Shah5 1University of Bucharest, Romania, 2MBZ University of Artiﬁcial Intelligence, UAE 3SecurifAI, Romania, 4Link¨oping University, Sweden, 5University of Central Florida, US Detecting abnormal events in video is commonly framed as a one-class classiﬁcation task, where training videos contain only normal events, while test videos encompass both normal and abnormal events. In this scenario, anomaly …",
+      "truncated": true,
+      "rerank_score": 0.866,
+      "cited": false
+     },
+     {
+      "passage": 2,
+      "chunk_id": "2111.08644v3_c0009",
+      "paper_id": "2111.08644v3",
+      "title": "UBnormal: New Benchmark for Supervised Open-Set Video Anomaly Detection",
+      "pages": "4",
+      "url": "https://arxiv.org/abs/2111.08644v3",
+      "text": "… provide optimal results in anomaly detection. Hence, we consider works on open-set action recognition [5,8] as very distantly related. Scenes. The UBnormal benchmark is generated using the Cinema4D software, which allows us to create scenes using 2D background images and 3D animations. We select a total of 29 natural images that represent street scenes, train stations, ofﬁce rooms, among others. In the selected background images, we make sure to eliminate people, cars or other objects that should belong to the …",
+      "truncated": true,
+      "rerank_score": 0.629,
+      "cited": true
+     },
+     {
+      "passage": 3,
+      "chunk_id": "2111.08644v3_c0011",
+      "paper_id": "2111.08644v3",
+      "title": "UBnormal: New Benchmark for Supervised Open-Set Video Anomaly Detection",
+      "pages": "4-5",
+      "url": "https://arxiv.org/abs/2111.08644v3",
+      "text": "we include foggy scenes, night scenes, and ﬁre and smoke as abnormal events. In existing data sets, a single person or a small group of people perform most of the abnormal actions. We can take the person with blue pants that is running or throwing a backpack or some papers in CUHK Avenue [33] as example, or the group of guys that are running and ﬁght- ing in various scenes from ShanghaiTech [35]. Different from such data sets, the anomalous …",
+      "truncated": true,
+      "rerank_score": 0.562,
+      "cited": false
+     },
+     {
+      "passage": 4,
+      "chunk_id": "2111.08644v3_c0003",
+      "paper_id": "2111.08644v3",
+      "title": "UBnormal: New Benchmark for Supervised Open-Set Video Anomaly Detection",
+      "pages": "2",
+      "url": "https://arxiv.org/abs/2111.08644v3",
+      "text": "To alleviate this issue, we propose UBnormal, a new benchmark comprising multiple virtual scenes for video anomaly detection. Our scenes are generated in Cinema4D using virtual animated characters and objects that are placed in realworld backgrounds, as shown in Figure 1. To the best of our knowledge, this is the ﬁrst data set for supervised open-set anomaly detection in video. Although UBnormal enables both the development and training of models in ideal conditions (with full supervision), and the evaluation of …",
+      "truncated": true,
+      "rerank_score": 0.545,
+      "cited": true
+     },
+     {
+      "passage": 5,
+      "chunk_id": "2311.01851v1_c0010",
+      "paper_id": "2311.01851v1",
+      "title": "Holistic Representation Learning for Multitask Trajectory Anomaly Detection",
+      "pages": "4",
+      "url": "https://arxiv.org/abs/2311.01851v1",
+      "text": "task uses a different segment us, updates are computed accumulatively for the entirety of u to stabilize training. The datasets used, alongside implementation and training details are described in Section 4.1. We compare our proposed approach to state-of-the-art models in Section 4.2. We show qualitative results on all three tasks in Section 4.3 followed by ablation studies in Section 4.4. Datasets. We report our framework’s performance over a diverse set of VAD datasets. Human-Related ShanghaiTech Campus (HR-STC) [32, 36] consists …",
+      "truncated": true,
+      "rerank_score": 0.291,
+      "cited": false
+     }
+    ],
+    "timings_s": {
+     "dense": 0.36,
+     "bm25": 0.02,
+     "rerank": 1.6,
+     "llm": 22.73,
+     "total": 24.71
+    },
+    "model": "gemini-3.5-flash-lite"
+   }
+  },
+  {
+   "label": "Paraphrased question",
+   "question": "What auxiliary loss is minimized alongside the Real-NVP loss for visual anomaly detection on mobile robots?",
+   "broaden": false,
+   "response": {
+    "question": "What auxiliary loss is minimized alongside the Real-NVP loss for visual anomaly detection on mobile robots?",
+    "search_query": null,
+    "answerable": true,
+    "answer": "An auxiliary outlier exposure margin loss is minimized jointly with the Real-NVP loss to improve visual anomaly detection on mobile robots.",
+    "citations": [
+     {
+      "passage": 1,
+      "quote": "by minimizing, jointly with the Real-NVP loss, an auxiliary outlier exposure margin loss.",
+      "verified": true
+     }
+    ],
+    "citations_valid": true,
+    "passages": [
+     {
+      "passage": 1,
+      "chunk_id": "2209.09786v1_c0000",
+      "paper_id": "2209.09786v1",
+      "title": "An Outlier Exposure Approach to Improve Visual Anomaly Detection Performance for Mobile Robots",
+      "pages": "1",
+      "url": "https://arxiv.org/abs/2209.09786v1",
+      "text": "… are available. We tackle the problem of exploiting these data to improve the performance of a Real-NVP anomaly detection model, by minimizing, jointly with the Real-NVP loss, an auxiliary outlier exposure margin loss. We perform quantitative experiments on a novel dataset (which we publish as supplementary material) designed for anomaly detection in an indoor patrolling scenario. On a disjoint test set, our approach outperforms alternatives and shows that exposing even a small number of anomalous frames yields signiﬁcant performance improvements. …",
+      "truncated": true,
+      "rerank_score": 0.999,
+      "cited": true
+     },
+     {
+      "passage": 2,
+      "chunk_id": "2209.09786v1_c0018",
+      "paper_id": "2209.09786v1",
+      "title": "An Outlier Exposure Approach to Improve Visual Anomaly Detection Performance for Mobile Robots",
+      "pages": "7",
+      "url": "https://arxiv.org/abs/2209.09786v1",
+      "text": "available for training an RNVP+OE model. Using the complete training and testing sets, for N = 1, 2, 3, 4, 6, 12 types of anomalies, we run the following experiment 30 times: (1) we randomly pick a subset of N anomaly types; (2) we train RNVP+OE exposing it only to the selected anomaly types; (3) we compute the AUC over Fig. 7: Impact of the number of exposed anomaly frames (xaxis, log scale) on the AUC value (y-axis) for the …",
+      "truncated": true,
+      "rerank_score": 0.655,
+      "cited": false
+     },
+     {
+      "passage": 3,
+      "chunk_id": "2209.09786v1_c0004",
+      "paper_id": "2209.09786v1",
+      "title": "An Outlier Exposure Approach to Improve Visual Anomaly Detection Performance for Mobile Robots",
+      "pages": "2",
+      "url": "https://arxiv.org/abs/2209.09786v1",
+      "text": "informative embedding into an image. The bottleneck limits the embedding size thus inducing a reproduction error in the output. This error can be exploited to detect anomalies when an autoencoder is trained only on normal images. Such a model, when tasked to reproduce an image that contains an anomaly, will fail to correctly reconstruct it; the reconstruction error can therefore be used as an anomaly score for the given input. Normalizing Flows: Normalizing Flow models are used both for generative …",
+      "truncated": true,
+      "rerank_score": 0.624,
+      "cited": false
+     },
+     {
+      "passage": 4,
+      "chunk_id": "2209.09786v1_c0019",
+      "paper_id": "2209.09786v1",
+      "title": "An Outlier Exposure Approach to Improve Visual Anomaly Detection Performance for Mobile Robots",
+      "pages": "7-8",
+      "url": "https://arxiv.org/abs/2209.09786v1",
+      "text": "Real-NVP loss. Quantitative experiments show that exposure to even a small number of anomaly frames signiﬁcantly improves anomaly detection performance and that the proposed approach signiﬁcantly outperforms alternative approaches. We further release a dataset, comprising more than 132k frames collected by a real ground robot in different indoor environments, and representing several occurrences of each of 16 different anomaly types, spanning from sensor defects to high-level semantic anomalies. Our proposed approach and dataset pave the way for further research aimed …",
+      "truncated": true,
+      "rerank_score": 0.589,
+      "cited": false
+     },
+     {
+      "passage": 5,
+      "chunk_id": "2209.09786v1_c0008",
+      "paper_id": "2209.09786v1",
+      "title": "An Outlier Exposure Approach to Improve Visual Anomaly Detection Performance for Mobile Robots",
+      "pages": "3",
+      "url": "https://arxiv.org/abs/2209.09786v1",
+      "text": "the original samples is recovered from the target probability density as: For the rest of the paper, we ﬁx the target to be a multivariate normal distribution of zero mean and unit variance Z = N(0, 1).1 Normalizing ﬂow models are trained to maximize the likelihood of the samples in Xn, or equivalently to minimize their average negative-log-likelihood loss function: While the ﬁrst term is easily computed, and equals to d 2 log(2π) + 1 2|m(x)|2 for the chosen Z, …",
+      "truncated": true,
+      "rerank_score": 0.356,
+      "cited": false
+     }
+    ],
+    "timings_s": {
+     "dense": 0.37,
+     "bm25": 0.03,
+     "rerank": 1.9,
+     "llm": 13.55,
+     "total": 15.85
+    },
+    "model": "gemini-3.5-flash-lite"
+   }
+  },
+  {
+   "label": "Specific question",
+   "question": "What are the four main components of the Prior Normality Prompt Transformer (PNPT) framework?",
+   "broaden": false,
+   "response": {
+    "question": "What are the four main components of the Prior Normality Prompt Transformer (PNPT) framework?",
+    "search_query": null,
+    "answerable": true,
+    "answer": "The Prior Normality Prompt Transformer (PNPT) framework consists of four main components: Class-Specific Normality Prompting Pool (CS-NPP), Hierarchical Patch Embedding (HPE), Semantic Alignment Coupling Encoding (SACE), and Contextual Semantic Conditional Decoding (CSCD).",
+    "citations": [
+     {
+      "passage": 1,
+      "quote": "The proposed framework consists of four main novel components: Class-Specific Normality Prompting Pool (CS-NPP), Hierarchical Patch Embedding (HPE), Semantic Alignment Coupling Encoding (SACE), and Contextual Semantic Conditional Decoding (CSCD).",
+      "verified": true
+     }
+    ],
+    "citations_valid": true,
+    "passages": [
+     {
+      "passage": 1,
+      "chunk_id": "2406.11507v1_c0007",
+      "paper_id": "2406.11507v1",
+      "title": "Prior Normality Prompt Transformer for Multi-class Industrial Image Anomaly Detection",
+      "pages": "3-4",
+      "url": "https://arxiv.org/abs/2406.11507v1",
+      "text": "… input construction. GAP and Cat. represent global average pooling and concatenation. integration of these two learning approaches. This integration enhances the implicit reconstruction-based method by incorporating explicit normality prompt information to integrate prior semantics with the intrinsic semantics of the samples. The overall architecture of PNPT is illustrated in Fig. 2. The proposed framework consists of four main novel components: Class-Specific Normality Prompting Pool (CS-NPP), Hierarchical Patch Embedding (HPE), Semantic Alignment Coupling Encoding (SACE), and Contextual Semantic Conditional Decoding (CSCD).",
+      "truncated": true,
+      "rerank_score": 0.979,
+      "cited": true
+     },
+     {
+      "passage": 2,
+      "chunk_id": "2406.11507v1_c0008",
+      "paper_id": "2406.11507v1",
+      "title": "Prior Normality Prompt Transformer for Multi-class Industrial Image Anomaly Detection",
+      "pages": "4",
+      "url": "https://arxiv.org/abs/2406.11507v1",
+      "text": "the implicit reconstruction-based method by incorporating explicit normality prompt information to integrate prior semantics with the intrinsic semantics of the samples. The overall architecture of PNPT is illustrated in Fig. 2. The proposed framework consists of four main novel components: Class-Specific Normality Prompting Pool (CS-NPP), Hierarchical Patch Embedding (HPE), Semantic Alignment Coupling Encoding (SACE), and Contextual Semantic Conditional Decoding (CSCD). First, unlike existing methods that only use the single input image, our PNPT adopts a dual-stream input paradigm within the …",
+      "truncated": true,
+      "rerank_score": 0.976,
+      "cited": false
+     },
+     {
+      "passage": 3,
+      "chunk_id": "2406.11507v1_c0000",
+      "paper_id": "2406.11507v1",
+      "title": "Prior Normality Prompt Transformer for Multi-class Industrial Image Anomaly Detection",
+      "pages": "1",
+      "url": "https://arxiv.org/abs/2406.11507v1",
+      "text": "IEEE TRANSACTIONS ON INDUSTRIAL INFORMATICS, VOL. XX, NO. XX, XXXX 1 Prior Normality Prompt Transformer for Multi-class Industrial Image Anomaly Detection Haiming Yao, Yunkang Cao, Wei Luo, Weihang Zhang, Wenyong Yu, Senior Member IEEE, and Weiming Shen, Fellow IEEE Abstract— Image anomaly detection plays a pivotal role in industrial inspection. Traditional approaches often demand distinct models for specific categories, resulting in substantial deployment costs. This raises concerns about multi-class anomaly detection, where a unified model is developed for multiple classes. …",
+      "truncated": true,
+      "rerank_score": 0.957,
+      "cited": false
+     },
+     {
+      "passage": 4,
+      "chunk_id": "2406.11507v1_c0013",
+      "paper_id": "2406.11507v1",
+      "title": "Prior Normality Prompt Transformer for Multi-class Industrial Image Anomaly Detection",
+      "pages": "6",
+      "url": "https://arxiv.org/abs/2406.11507v1",
+      "text": "is a vectorization function that converts a tensor into a one-dimensional vector. After the loss is calculated, PNPT adopts an end-to-end training strategy to optimize the entire model. 2) Anomaly Scoring: During the testing phase, the reconstruction errors are employed as the anomaly score: self, Φ(·) denotes the Interpolation operation. The overall workflow of PNPT is shown in Algorithm 1. This section offers empirical validation of the proposed PNPT, encompassing comparative analyses across various benchmark datasets, model ablation experiments, and …",
+      "truncated": true,
+      "rerank_score": 0.937,
+      "cited": false
+     },
+     {
+      "passage": 5,
+      "chunk_id": "2406.11507v1_c0005",
+      "paper_id": "2406.11507v1",
+      "title": "Prior Normality Prompt Transformer for Multi-class Industrial Image Anomaly Detection",
+      "pages": "2-3",
+      "url": "https://arxiv.org/abs/2406.11507v1",
+      "text": "and 98.1, respectively, on the representative MVTec AD dataset. Additionally, it also demonstrates superior performance on the MVTec LOCO and BTAD datasets, and we have further validated its effectiveness in practical industrial experiments. This study categorizes existing industrial image AD methods into two primary categories: implicit and explicit normality learning methods, which are introduced below. A. Implicit normality learning approaches The implicit learning method involves incorporating normal samples during training, implicitly integrating their semantic information into the weights of models. …",
+      "truncated": true,
+      "rerank_score": 0.72,
+      "cited": false
+     }
+    ],
+    "timings_s": {
+     "dense": 0.41,
+     "bm25": 0.03,
+     "rerank": 1.87,
+     "llm": 7.3,
+     "total": 9.61
+    },
+    "model": "gemini-3.5-flash-lite"
+   }
+  },
+  {
+   "label": "Specific question",
+   "question": "What is the name of the open-source deep learning library for unsupervised anomaly detection and localization that supports OpenVINO?",
+   "broaden": false,
+   "response": {
+    "question": "What is the name of the open-source deep learning library for unsupervised anomaly detection and localization that supports OpenVINO?",
+    "search_query": null,
+    "answerable": true,
+    "answer": "The library is called Anomalib, which is an open-source deep learning library for unsupervised anomaly detection and localization that supports OpenVINO.",
+    "citations": [
+     {
+      "passage": 1,
+      "quote": "This paper introduces anomalib1, a novel library for unsupervised anomaly detection and localization. With reproducibility and modularity in mind, this open-source library provides algorithms from the literature",
+      "verified": true
+     },
+     {
+      "passage": 1,
+      "quote": "The library also supports OpenVINO model-optimization and quantization for realtime deployment.",
+      "verified": true
+     }
+    ],
+    "citations_valid": true,
+    "passages": [
+     {
+      "passage": 1,
+      "chunk_id": "2202.08341v1_c0000",
+      "paper_id": "2202.08341v1",
+      "title": "Anomalib: A Deep Learning Library for Anomaly Detection",
+      "pages": "1",
+      "url": "https://arxiv.org/abs/2202.08341v1",
+      "text": "ANOMALIB: A DEEP LEARNING LIBRARY FOR ANOMALY DETECTION Samet Akcay, Dick Ameln, Ashwin Vaidya, Barath Lakshmanan, Nilesh Ahuja, Utku Genc This paper introduces anomalib1, a novel library for unsupervised anomaly detection and localization. With reproducibility and modularity in mind, this open-source library provides algorithms from the literature and a set of tools to design custom anomaly detection algorithms via a plug-andplay approach. Anomalib comprises state-of-the-art anomaly detection algorithms that achieve top performance on the benchmarks and that can be used …",
+      "truncated": true,
+      "rerank_score": 1.0,
+      "cited": true
+     },
+     {
+      "passage": 2,
+      "chunk_id": "2202.08341v1_c0005",
+      "paper_id": "2202.08341v1",
+      "title": "Anomalib: A Deep Learning Library for Anomaly Detection",
+      "pages": "3-4",
+      "url": "https://arxiv.org/abs/2202.08341v1",
+      "text": "thresholding mechanism, which optimizes the value of the threshold based on the F1 score during validation. Alternatively, the user can specify a manual threshold. This is useful in cases where insufﬁcient representative validation data is available. Visualization. During validation and testing, anomalib can be conﬁgured to show and save visualizations of the predicted anomaly heatmaps and segmentation masks (Figure 5). Optimization. To achieve faster inference and throughput via quantization and optimization, the library utilizes OpenVINO [5] and Neural Network Compression …",
+      "truncated": true,
+      "rerank_score": 0.955,
+      "cited": false
+     },
+     {
+      "passage": 3,
+      "chunk_id": "2202.08341v1_c0006",
+      "paper_id": "2202.08341v1",
+      "title": "Anomalib: A Deep Learning Library for Anomaly Detection",
+      "pages": "3-4",
+      "url": "https://arxiv.org/abs/2202.08341v1",
+      "text": "loggers remain abstracted from the user. Carpet Grid Leather Tile Wood Bottle Cable Capsule Hazelnut Metalnut Pill Screw Toothbrush Transistor Zipper Mean Table 1. Image Level AUROC Scores for MVTec [7] dataset categories. Carpet Grid Leather Tile Wood Bottle Cable Capsule Hazelnut Metalnut Pill Screw Toothbrush Transistor Zipper Mean Table 2. Pixel Level AUROC Scores for MVTec [7] dataset categories. Anomalib provides several ready-to-use scripts to train and export models, run inference on trained PyTorch or OpenVINO models, and run …",
+      "truncated": true,
+      "rerank_score": 0.871,
+      "cited": false
+     },
+     {
+      "passage": 4,
+      "chunk_id": "2202.08341v1_c0002",
+      "paper_id": "2202.08341v1",
+      "title": "Anomalib: A Deep Learning Library for Anomaly Detection",
+      "pages": "2",
+      "url": "https://arxiv.org/abs/2202.08341v1",
+      "text": "to deployment. Anomalib follows four design principles, each of which is explained below. Reproducibility. One of the main goals of the anomalib library is to compare the performance of different state-ofthe-art anomaly detection algorithms on public and custom benchmark datasets. To ensure a valid comparison, the algorithm implementations in anomalib aim to reproduce the results reported in the original publications. Extensibility. Given the fast pace of progress in the anomaly detection ﬁeld, it is crucial that new algorithms can be …",
+      "truncated": true,
+      "rerank_score": 0.862,
+      "cited": false
+     },
+     {
+      "passage": 5,
+      "chunk_id": "2202.08341v1_c0001",
+      "paper_id": "2202.08341v1",
+      "title": "Anomalib: A Deep Learning Library for Anomaly Detection",
+      "pages": "1-2",
+      "url": "https://arxiv.org/abs/2202.08341v1",
+      "text": "1) call for the need for a uniﬁed library for benchmarking algorithms. Where supervised tasks have seen various such libraries [1] 1https://github.com/openvinotoolkit/anomalib 3Paper statistics are taken from https://paperswithcode.com Fig. 1. Number of anomaly detection datasets and papers recently released and published in the literature.3 [2] emerge over the past years, the unsupervised anomaly detection domain lacks similar efforts to date. Existing anomaly detection libraries focus on single algorithms only, lack performance optimizations, or do not include deep learning techniques [3]. …",
+      "truncated": true,
+      "rerank_score": 0.844,
+      "cited": false
+     }
+    ],
+    "timings_s": {
+     "dense": 0.33,
+     "bm25": 0.03,
+     "rerank": 2.08,
+     "llm": 26.07,
+     "total": 28.52
+    },
+    "model": "gemini-3.5-flash-lite"
+   }
+  },
+  {
+   "label": "Specific question",
+   "question": "Which methods are used for unsupervised anomaly detection in medical images such as brain MRI?",
+   "broaden": false,
+   "response": {
+    "question": "Which methods are used for unsupervised anomaly detection in medical images such as brain MRI?",
+    "search_query": null,
+    "answerable": true,
+    "answer": "Unsupervised methods for anomaly detection in brain MRI utilize autoencoders, such as variational autoencoders (VAE) and convolutional autoencoders, where detection is performed using reconstruction error or embedding space deviation.",
+    "citations": [
+     {
+      "passage": 2,
+      "quote": "Baur et al. [1] developed a variational autoencoder (VAE) for the detection of anomalies in brain MRI scans",
+      "verified": true
+     },
+     {
+      "passage": 3,
+      "quote": "Auto-encoders are a well-known approach used in literature, formulated as jointly learning to encode image x ∈IRm×n into an embedding z ∈IRd, and learning to decode the embedding to reconstruct the image",
+      "verified": false
+     }
+    ],
+    "citations_valid": false,
+    "passages": [
+     {
+      "passage": 1,
+      "chunk_id": "2211.15527v1_c0000",
+      "paper_id": "2211.15527v1",
+      "title": "A Study of Representational Properties of Unsupervised Anomaly Detection in Brain MRI",
+      "pages": "1",
+      "url": "https://arxiv.org/abs/2211.15527v1",
+      "text": "A Study of Representational Properties of Unsupervised Anomaly Detection in Brain MRI Ayantika Das1, Arun Palla1, Keerthi Ram2, and 1 Indian Institute of Technology, Madras, India 2 Healthcare Technology Innovation Centre, IIT Madras, India Abstract. Anomaly detection in MRI is of high clinical value in imaging and diagnosis. Unsupervised methods for anomaly detection provide interesting formulations based on reconstruction or latent embedding, oﬀering a way to observe properties related to factorization. We study four existing modeling methods, and report our …",
+      "truncated": true,
+      "rerank_score": 0.999,
+      "cited": false
+     },
+     {
+      "passage": 2,
+      "chunk_id": "2107.09204v1_c0005",
+      "paper_id": "2107.09204v1",
+      "title": "A Comparison of Supervised and Unsupervised Deep Learning Methods for Anomaly Detection in Images",
+      "pages": "2",
+      "url": "https://arxiv.org/abs/2107.09204v1",
+      "text": "… quality, non-linear features but is also good in eliminating outliers and noise without having any access to preprocessed training data. Baur et al. [1] developed a variational autoencoder (VAE) for the detection of anomalies in brain MRI scans and found that having constraints on the latent space and adversarial training can help to further improve the overall performance of the autoencoders, but also that the VAE offers no significant advantage against convolutional autoencoders. Zong et al. [11] developed a deep",
+      "truncated": true,
+      "rerank_score": 0.999,
+      "cited": true
+     },
+     {
+      "passage": 3,
+      "chunk_id": "2211.15527v1_c0002",
+      "paper_id": "2211.15527v1",
+      "title": "A Study of Representational Properties of Unsupervised Anomaly Detection in Brain MRI",
+      "pages": "2-3",
+      "url": "https://arxiv.org/abs/2211.15527v1",
+      "text": "… data (out-of-distribution) are expected to result in performance degradation in the task of reconstruction, oﬀering a means of ﬂagging anomaly. Auto-encoders are a well-known approach used in literature, formulated as jointly learning to encode image x ∈IRm×n(m and n are the height and width of the image) into an embedding z ∈IRd, and learning to decode the embedding to reconstruct the image ˆx. Notationally, z = fθ(x); ˆx = gφ(z), where fθ is the encoder and gφ is the decoder. …",
+      "truncated": true,
+      "rerank_score": 0.996,
+      "cited": true
+     },
+     {
+      "passage": 4,
+      "chunk_id": "2107.09204v1_c0000",
+      "paper_id": "2107.09204v1",
+      "title": "A Comparison of Supervised and Unsupervised Deep Learning Methods for Anomaly Detection in Images",
+      "pages": "1",
+      "url": "https://arxiv.org/abs/2107.09204v1",
+      "text": "A Comparison of Supervised and Unsupervised Deep Learning Vincent Wilmet vincent.wilmet@student-cs.fr Sauraj Verma saureyj.verma@student-cs.fr Håkon Sandaker hakon.sandaker@student-cs.fr Anomaly detection in images plays a significant role for many applications across all industries, such as disease diagnosis in healthcare or quality assurance in manufacturing. Manual inspection of images, when extended over a monotonously repetitive period of time is very time consuming and can lead to anomalies being overlooked.Artificial neural networks have proven themselves very successful on simple, repetitive tasks, in some cases …",
+      "truncated": true,
+      "rerank_score": 0.99,
+      "cited": false
+     },
+     {
+      "passage": 5,
+      "chunk_id": "2107.09903v1_c0001",
+      "paper_id": "2107.09903v1",
+      "title": "Anomaly Detection via Self-organizing Map",
+      "pages": "1",
+      "url": "https://arxiv.org/abs/2107.09903v1",
+      "text": "hand, we cannot know all types of defects before they occur. On the contrary, the normal samples are almost the same and easily accessible. Therefore, modeling the normality of normal samples for abnormal detection using an unsupervised manner is a feasible idea. In re- ⋆Ning Li and Kaitao Jiang are co-ﬁrst authors. § Corresponding author: Xing Wei. † IEEE Fellow cent years, a large number of anomaly detection methods have been proposed. We provide an overview of existing unsupervised anomaly …",
+      "truncated": true,
+      "rerank_score": 0.987,
+      "cited": false
+     }
+    ],
+    "timings_s": {
+     "dense": 0.36,
+     "bm25": 0.02,
+     "rerank": 2.2,
+     "llm": 8.16,
+     "total": 10.74
+    },
+    "model": "gemini-3.5-flash-lite"
+   }
+  },
+  {
+   "label": "Near-miss: paper in corpus, detail not",
+   "question": "Which CUDA and PyTorch versions were used when measuring the inference time of TMUAD?",
+   "broaden": false,
+   "response": {
+    "question": "Which CUDA and PyTorch versions were used when measuring the inference time of TMUAD?",
+    "search_query": null,
+    "answerable": false,
+    "answer": "",
+    "citations": [],
+    "citations_valid": false,
+    "passages": [
+     {
+      "passage": 1,
+      "chunk_id": "2405.14325v5_c0026",
+      "paper_id": "2405.14325v5",
+      "title": "Dinomaly: The Less Is More Philosophy in Multi-Class Unsupervised Anomaly Detection",
+      "pages": "12-14",
+      "url": "https://arxiv.org/abs/2405.14325v5",
+      "text": "encoder and decoder feature maps (averaging if more than one pair or group). The mean of the top 1% pixels in an anomaly map is used as the image anomaly score. All experiments are conducted with random seed=1 with cuda deterministic for invariable weight initialization and batch order. Codes are implemented with Python 3.8 and PyTorch 1.12.0 cuda 11.3, and run on NVIDIA GeForce RTX3090 GPUs (24GB). Most results of compared MUAD SoTAs are directly Table A1. Comparison between pre-trained …",
+      "truncated": true,
+      "rerank_score": 0.791,
+      "cited": false
+     },
+     {
+      "passage": 2,
+      "chunk_id": "2508.21795v1_c0022",
+      "paper_id": "2508.21795v1",
+      "title": "TMUAD: Enhancing Logical Capabilities in Unified Anomaly Detection Models with a Text Memory Bank",
+      "pages": "12",
+      "url": "https://arxiv.org/abs/2508.21795v1",
+      "text": "We further introduce two variants: TMUAD-U-L, built on Qwen2VL-7B with 300 clusters, and TMUAD-U-S, built on w/o Qwen2-VL-7B and with 25 clusters. Additionally, we report TABLE XI RESOURCE EFFICIENCY AND PERFORMANCE ANALYSIS ON THE MVTEC LOCO [6] DATASET IN IMAGE-LEVEL AUROC. “-I” INDICATES CLIP TRAINED INDIVIDUALLY ON THE MVTEC LOCO [6] DATASET, WHILE “-U” DENOTES CLIP TRAINED UNIFORMLY ACROSS ALL the inference time of TMUAD-U-B when accelerated by three A6000 GPUs in parallel. Except TMUAD-U-B (3 GPUs), all experiments in …",
+      "truncated": true,
+      "rerank_score": 0.731,
+      "cited": false
+     },
+     {
+      "passage": 3,
+      "chunk_id": "2307.12540v2_c0022",
+      "paper_id": "2307.12540v2",
+      "title": "UniFormaly: Towards Task-Agnostic Unified Framework for Visual Anomaly Detection",
+      "pages": "10-11",
+      "url": "https://arxiv.org/abs/2307.12540v2",
+      "text": "in 2D images. However, in the real world, anomalies can emerge from various modalities, such as sensory data, video data, and natural language. Since the Vision Transformer (ViT) architecture is inherently scalable with respect to input modalities, there is potential for Uniformly to expand its task coverage to encompass other modalities. We intend to explore this avenue in future research. We implemented our experiments on Python 3.8.10 [33] and PyTorch [24] with NVIDIA A100 80GB GPUs on CUDA 11.3. For …",
+      "truncated": true,
+      "rerank_score": 0.34,
+      "cited": false
+     },
+     {
+      "passage": 4,
+      "chunk_id": "2508.21795v1_c0000",
+      "paper_id": "2508.21795v1",
+      "title": "TMUAD: Enhancing Logical Capabilities in Unified Anomaly Detection Models with a Text Memory Bank",
+      "pages": "1",
+      "url": "https://arxiv.org/abs/2508.21795v1",
+      "text": "TMUAD: Enhancing Logical Capabilities in Unified Anomaly Detection Models with a Text Memory Bank Jiawei Liu ID , Member, IEEE, Jiahe Hou ID , Wei Wang ID , Jinsong Du ID , Yang Cong ID , Senior Member, IEEE, and Huijie Fan ID , Member, IEEE Abstract—Anomaly detection, which aims to identify anomalies deviating from normal patterns, is challenging due to the limited amount of normal data available. Unlike most existing unified methods that rely on carefully designed image feature …",
+      "truncated": true,
+      "rerank_score": 0.238,
+      "cited": false
+     },
+     {
+      "passage": 5,
+      "chunk_id": "2604.01171v1_c0013",
+      "paper_id": "2604.01171v1",
+      "title": "Open-Set Supervised 3D Anomaly Detection: An Industrial Dataset and a Generalisable Framework for Unknown Defects",
+      "pages": "6",
+      "url": "https://arxiv.org/abs/2604.01171v1",
+      "text": "a few labeled anomalies, whereas DRA learns disentangled representations of abnormalities to improve generalization to unseen anomaly classes. This implementation strategy enables us to systematically examine whether classical open-set anomaly detection principles remain effective when transferred from the image domain to realistic 3D industrial point cloud scenarios. The complete baseline implementation and parameter settings are presented in the Supplementary Materials. 3) Implementation details.: We implement our baseline using PyTorch 2.0.1 with CUDA 11.8 and train it on an NVIDIA A100-SXM4-40GB …",
+      "truncated": true,
+      "rerank_score": 0.186,
+      "cited": false
+     }
+    ],
+    "timings_s": {
+     "dense": 0.4,
+     "bm25": 0.02,
+     "rerank": 2.07,
+     "llm": 14.47,
+     "total": 16.97
+    },
+    "model": "gemini-3.5-flash-lite"
+   }
+  },
+  {
+   "label": "Near-miss: paper in corpus, detail not",
+   "question": "What was the monetary cost in USD of the GPT-4V API requests during the zero-shot evaluation of LogSAD?",
+   "broaden": false,
+   "response": {
+    "question": "What was the monetary cost in USD of the GPT-4V API requests during the zero-shot evaluation of LogSAD?",
+    "search_query": null,
+    "answerable": false,
+    "answer": "",
+    "citations": [],
+    "citations_valid": false,
+    "passages": [
+     {
+      "passage": 1,
+      "chunk_id": "2311.02782v3_c0005",
+      "paper_id": "2311.02782v3",
+      "title": "Towards Generic Anomaly Detection and Understanding: Large-scale Visual-linguistic Model (GPT-4V) Takes the Lead",
+      "pages": "7",
+      "url": "https://arxiv.org/abs/2311.02782v3",
+      "text": "as observed in the in-context learning capacity of GPT-4V [101], can stimulate deeper interaction. The single-round conversation approach restricts the depth of interaction and may constrain the model’s comprehension and its effectiveness in responding to anomaly detection tasks. Exploring multi-round interactions could reveal a more nuanced perspective of the model’s performance. 2 Observations of GPT-4V on Multi-modal Multi-domain Anomaly Detection Following a thorough evaluation of GPT-4V’s performance across various multi-modality and multi-field anomaly detection tasks, it becomes apparent that GPT-4V …",
+      "truncated": true,
+      "rerank_score": 0.109,
+      "cited": false
+     },
+     {
+      "passage": 2,
+      "chunk_id": "2311.02782v3_c0013",
+      "paper_id": "2311.02782v3",
+      "title": "Towards Generic Anomaly Detection and Understanding: Large-scale Visual-linguistic Model (GPT-4V) Takes the Lead",
+      "pages": "11-12",
+      "url": "https://arxiv.org/abs/2311.02782v3",
+      "text": "predefined normal rules manually, GPT-4V might be capable of determining whether an image adheres to normal rules, thereby enabling a more rational approach to logical anomaly detection. To ensure an effective assessment of testing images, it is crucial to provide clear guidelines defining the expected normal state for GPT-4V. This enables GPT-4V to evaluate the conformity of testing images with the established standards, relying on an analysis of image content in relation to these norms. Consequently, our approach involves presenting …",
+      "truncated": true,
+      "rerank_score": 0.095,
+      "cited": false
+     },
+     {
+      "passage": 3,
+      "chunk_id": "2311.02782v3_c0023",
+      "paper_id": "2311.02782v3",
+      "title": "Towards Generic Anomaly Detection and Understanding: Large-scale Visual-linguistic Model (GPT-4V) Takes the Lead",
+      "pages": "16-18",
+      "url": "https://arxiv.org/abs/2311.02782v3",
+      "text": "of versatile and adaptable AI models. GPT-4V demonstrates exceptional proficiency in identifying anomalies across diverse modalities and fields, offering both comprehensive and nuanced semantic comprehension. Its ability to deduce anomalies and its responsiveness to an expanding array of prompts underscore its versatility and potential. Nevertheless, like any technology, there remains room for further enhancement, particularly in intricate and subtle scenarios. The opportunities delineated in this evaluation propose promising avenues for future research and development. The inclusion of quantitative metrics, broadening …",
+      "truncated": true,
+      "rerank_score": 0.081,
+      "cited": false
+     },
+     {
+      "passage": 4,
+      "chunk_id": "2311.02782v3_c0000",
+      "paper_id": "2311.02782v3",
+      "title": "Towards Generic Anomaly Detection and Understanding: Large-scale Visual-linguistic Model (GPT-4V) Takes the Lead",
+      "pages": "1-2",
+      "url": "https://arxiv.org/abs/2311.02782v3",
+      "text": "Towards Generic Anomaly Detection and Understanding: Large-scale Visual-linguistic Model (GPT-4V) Takes the Lead Yunkang Cao1∗, Xiaohao Xu2∗, Chen Sun3∗, Xiaonan Huang2 and Weiming Shen1 1Huazhong University of Science and Technology 2University of Michigan, Ann Arbor 3University of Toronto Anomaly detection is a crucial task across different domains and data types. However, existing anomaly detection models are often designed for specific domains and modalities. This study explores the use of GPT-4V(ision), a powerful visual-linguistic model, to address anomaly detection tasks in …",
+      "truncated": true,
+      "rerank_score": 0.056,
+      "cited": false
+     },
+     {
+      "passage": 5,
+      "chunk_id": "2311.02782v3_c0015",
+      "paper_id": "2311.02782v3",
+      "title": "Towards Generic Anomaly Detection and Understanding: Large-scale Visual-linguistic Model (GPT-4V) Takes the Lead",
+      "pages": "12-13",
+      "url": "https://arxiv.org/abs/2311.02782v3",
+      "text": "[82] [88] [87] and pre-train methods [75] [28] [60] [62] Although these methods have achieved great improvements, a unified anomaly detection model across different diseases and modalities still remains an unsolved challenge. As highlighted in [71] and [97], GPT-4V, equipped with numerous multi-modal knowledge, shows promising future in enhancing the performance of anomaly detection tasks in various medical imaging modalities. We aim to investigate the generalization abilities of GPT-4V on medical anomaly detection. Thus medical images on across different diseases …",
+      "truncated": true,
+      "rerank_score": 0.025,
+      "cited": false
+     }
+    ],
+    "timings_s": {
+     "dense": 0.45,
+     "bm25": 0.03,
+     "rerank": 1.94,
+     "llm": 24.17,
+     "total": 26.62
+    },
+    "model": "gemini-3.5-flash-lite"
+   }
+  },
+  {
+   "label": "Paper outside the corpus",
+   "question": "What image-level AUROC scores did the Denoising Diffusion Anomaly Detection (DDAD) framework achieve on MVTec and VisA?",
+   "broaden": false,
+   "response": {
+    "question": "What image-level AUROC scores did the Denoising Diffusion Anomaly Detection (DDAD) framework achieve on MVTec and VisA?",
+    "search_query": null,
+    "answerable": false,
+    "answer": "",
+    "citations": [],
+    "citations_valid": false,
+    "passages": [
+     {
+      "passage": 1,
+      "chunk_id": "2403.12362v1_c0012",
+      "paper_id": "2403.12362v1",
+      "title": "DMAD: Dual Memory Bank for Real-World Anomaly Detection",
+      "pages": "9-10",
+      "url": "https://arxiv.org/abs/2403.12362v1",
+      "text": "adopt a feature augmentation strategy [14]. This strategy involves using a Gaussian noise generator to create pseudo negative samples op ∈RN×3C. When annotated anomalies are accessible, a three parts hinge loss is used for the model’s optimization: In the general unified setting, λ1 = 1, λ2 = 0, while in the unified semisupervised setting, λ1 = 0.5, λ2 = 15. Given a test image xtest, we can utilize a well-trained DMAD to derive its patchlevel anomaly scores Stest. We adopt …",
+      "truncated": true,
+      "rerank_score": 0.999,
+      "cited": false
+     },
+     {
+      "passage": 2,
+      "chunk_id": "2211.13968v2_c0013",
+      "paper_id": "2211.13968v2",
+      "title": "MIAD: A Maintenance Inspection Dataset for Unsupervised Anomaly Detection",
+      "pages": "6",
+      "url": "https://arxiv.org/abs/2211.13968v2",
+      "text": "the dataset follow similar distribution. To prevent the data leakage, the θ and φ for training images satisfy All evaluated algorithms should provide a one-channel anomaly map, in which large values indicate that a certain pixel belongs to an anomalous region. And the maximum score over all pixels in a given anomaly map is regarded as the image-level anomaly score. To assess the image-level anomaly classiﬁcation performance, we adopt AUROC as a evaluation metric following MVTec AD [3]. Although AUROC …",
+      "truncated": true,
+      "rerank_score": 0.999,
+      "cited": false
+     },
+     {
+      "passage": 3,
+      "chunk_id": "2403.12362v1_c0015",
+      "paper_id": "2403.12362v1",
+      "title": "DMAD: Dual Memory Bank for Real-World Anomaly Detection",
+      "pages": "12-13",
+      "url": "https://arxiv.org/abs/2403.12362v1",
+      "text": "Furthermore, it outperforms UniAD [25] on the VisA dataset, achieving gains of 5.8↑and 42.9↑in AUROC and AP, respectively. When a few annotated anomalies are available, DMAD utilizes the dual memory bank to learn a more precise decision boundary, thereby achieving stateof-the-art performance on both the MVTec-AD and VisA datasets. Specifically, in a setting with 10 anomalies, DMAD can achieve an AUROC of 99.0 and an AP of 99.7 for anomaly detection in MVTec-AD, and 94.9 AUROC, 79.7 F1max and 84.9 …",
+      "truncated": true,
+      "rerank_score": 0.997,
+      "cited": false
+     },
+     {
+      "passage": 4,
+      "chunk_id": "2408.01960v1_c0017",
+      "paper_id": "2408.01960v1",
+      "title": "AnomalySD: Few-Shot Multi-Class Anomaly Detection with Stable Diffusion Model",
+      "pages": "6-7",
+      "url": "https://arxiv.org/abs/2408.01960v1",
+      "text": "complex textures, multiple objects, and single objects. Evaluation metrics. Referring to previous work, in image-level anomaly detection, we utilize metrics such as the Area Under the Receiver Operating Characteristic Curve (AUROC), Average Precision (AUPR), and F1-max for better evaluation under situation of data imbalance. For pixel-level anomaly localization, we employ pixel-wise AUROC and F1-max, along with Per-Region Overlap (PRO) scores. Implementation Details. All samples from MVTec-AD and VisA datasets are scaled to 512 × 512. In the fine-tuning stage, data …",
+      "truncated": true,
+      "rerank_score": 0.994,
+      "cited": false
+     },
+     {
+      "passage": 5,
+      "chunk_id": "2509.24448v1_c0015",
+      "paper_id": "2509.24448v1",
+      "title": "Generalist Multi-Class Anomaly Detection via Distillation to Two Heterogeneous Student Networks",
+      "pages": "7-8",
+      "url": "https://arxiv.org/abs/2509.24448v1",
+      "text": "practice. For the multi-class semantic AD, experiments were done using four different splits per dataset, varying the normal class indices according to the settings of UniAD [26]. In each split, half of the classes were designated as normal, while the remaining half were considered abnormal. The detailed class settings, including data splits for each dataset, are provided in Section C.1. Industrial Defect Detection. We evaluate our model’s performance on industrial anomaly detection using the MVTec-AD, MVTec-LOCO, VisA, and Real-IAD datasets, …",
+      "truncated": true,
+      "rerank_score": 0.99,
+      "cited": false
+     }
+    ],
+    "timings_s": {
+     "dense": 0.5,
+     "bm25": 0.03,
+     "rerank": 2.33,
+     "llm": 37.5,
+     "total": 40.39
+    },
+    "model": "gemini-3.5-flash-lite"
+   }
+  },
+  {
+   "label": "Broad question",
+   "question": "I am interested to study about the unsupervised medical anomaly detection, what are their current research?",
+   "broaden": false,
+   "response": {
+    "question": "I am interested to study about the unsupervised medical anomaly detection, what are their current research?",
+    "search_query": null,
+    "answerable": false,
+    "answer": "",
+    "citations": [],
+    "citations_valid": false,
+    "passages": [
+     {
+      "passage": 1,
+      "chunk_id": "2406.11507v1_c0001",
+      "paper_id": "2406.11507v1",
+      "title": "Prior Normality Prompt Transformer for Multi-class Industrial Image Anomaly Detection",
+      "pages": "1",
+      "url": "https://arxiv.org/abs/2406.11507v1",
+      "text": "National Natural Science Foundation of China (Grant No. 52375494), and in part by the Beijing Institute of Technology Research Fund Program for Young Scholars (Grant No. 6120220236). (Corresponding author: Wenyong Yu.) Haiming Yao and Wei Luo are with the State Key Laboratory of Precision Measurement Technology and Instruments, Department of Precision Instrument, Tsinghua University, Beijing 100084, China. (e-mails: yhm22@mails.tsinghua.edu.cn; luow23@@mails.tsinghua.edu.cn). Yunkang Cao, Wenyong Yu, and Weiming Shen are with the State Key Laboratory of Digital Manufacturing Equipment and Technology, School …",
+      "truncated": true,
+      "rerank_score": 0.959,
+      "cited": false
+     },
+     {
+      "passage": 2,
+      "chunk_id": "2109.13157v1_c0001",
+      "paper_id": "2109.13157v1",
+      "title": "Visual Anomaly Detection for Images: A Survey",
+      "pages": "1",
+      "url": "https://arxiv.org/abs/2109.13157v1",
+      "text": "novel patterns that different from the normal ones). Anomaly detection approaches usually extract, characterize and model the patterns with the available normal data, and then develop reasonable anomaly detectors to discover novel or abnormal patterns in the newly observed data. When the target of anomaly detection is the image data, then comes the visual anomaly detection or image anomaly detection. The research of visual anomaly detection is important both in view of the theory and applications. On the one hand, …",
+      "truncated": true,
+      "rerank_score": 0.933,
+      "cited": false
+     },
+     {
+      "passage": 3,
+      "chunk_id": "2412.20870v2_c0029",
+      "paper_id": "2412.20870v2",
+      "title": "SoftPatch+: Fully Unsupervised Anomaly Classification and Segmentation",
+      "pages": "14",
+      "url": "https://arxiv.org/abs/2412.20870v2",
+      "text": "learning approaches, leveraging a small amount of labeled data, could further improve the performance of anomaly detection. We are also interested in how to construct a large-scale real-world anomaly detection dataset, simulating batch defects in actual production lines. In this way, independent training and testing settings can be established to promote research in the field of fully unsupervised anomaly detection. This work was supported by the National Natural Science Foundation of China (Grant No. 62472282, Grant No. 72192821).",
+      "truncated": false,
+      "rerank_score": 0.928,
+      "cited": false
+     },
+     {
+      "passage": 4,
+      "chunk_id": "2307.04956v2_c0001",
+      "paper_id": "2307.04956v2",
+      "title": "PKU-GoodsAD: A Supermarket Goods Dataset for Unsupervised Anomaly Detection and Segmentation",
+      "pages": "1",
+      "url": "https://arxiv.org/abs/2307.04956v2",
+      "text": "quality inspection, anomaly detection can be used to detect defects on the surface of industrial products. In the field of medical diagnosis, it can be used to detect lesions on the surface of organs. In the field of intelligent surveillance, it can be used to detect the occurrence of anomalous events. Therefore, it has broad application prospects and research significance. Due to the scarcity of anomalous data, unsupervised anomaly detection algorithms have drawn much This work is supported by National …",
+      "truncated": true,
+      "rerank_score": 0.907,
+      "cited": false
+     },
+     {
+      "passage": 5,
+      "chunk_id": "2512.18219v1_c0000",
+      "paper_id": "2512.18219v1",
+      "title": "Unsupervised Anomaly Detection with an Enhanced Teacher for Student-Teacher Feature Pyramid Matching",
+      "pages": "1",
+      "url": "https://arxiv.org/abs/2512.18219v1",
+      "text": "Unsupervised Anomaly Detection with an Enhanced Teacher for Student-Teacher Feature Pyramid Mohammad Zolfaghari Department of Computer Science, University of Tehran Kish International Campus, Iran Hedieh Sajedi Department of Computer Science, School of Mathematics, Statistics and Computer Science, College of Science, University of Tehran Abstract— Anomaly detection or outlier is one of the challenging subjects in unsupervised learning. This paper is introduced a student-teacher framework for anomaly detection that its teacher network is enhanced for achieving high-performance metrics. For this purpose, …",
+      "truncated": true,
+      "rerank_score": 0.894,
+      "cited": false
+     }
+    ],
+    "timings_s": {
+     "dense": 1.87,
+     "bm25": 0.2,
+     "rerank": 3.04,
+     "llm": 25.05,
+     "total": 30.19
+    },
+    "model": "gemini-3.5-flash-lite"
+   }
+  },
+  {
+   "label": "Broad question, Broaden search on",
+   "question": "I am interested to study about the unsupervised medical anomaly detection, what are their current research?",
+   "broaden": true,
+   "response": {
+    "question": "I am interested to study about the unsupervised medical anomaly detection, what are their current research?",
+    "search_query": "unsupervised medical anomaly detection MRI CT X-ray pathology unsupervised learning",
+    "answerable": true,
+    "answer": "Current research in unsupervised anomaly detection explores disease-agnostic models trained exclusively with normal data to flag anomalies through reconstruction error or latent embedding deviation. Additionally, these algorithms are generally categorized into methods based on pre-trained models, pseudo anomaly generation, and generative models.",
+    "citations": [
+     {
+      "passage": 1,
+      "quote": "Contemporary studies [2] explore unsupervised techniques, towards building disease-agnostic models for pathology detection and delineation",
+      "verified": true
+     },
+     {
+      "passage": 5,
+      "quote": "At present, unsupervised anomaly detection algorithms can be divided into three categories: those based on pre-trained models, those based on pseudo anomaly generation, and those based on generative models.",
+      "verified": true
+     }
+    ],
+    "citations_valid": true,
+    "passages": [
+     {
+      "passage": 1,
+      "chunk_id": "2211.15527v1_c0002",
+      "paper_id": "2211.15527v1",
+      "title": "A Study of Representational Properties of Unsupervised Anomaly Detection in Brain MRI",
+      "pages": "2-3",
+      "url": "https://arxiv.org/abs/2211.15527v1",
+      "text": "… lesions like tumor and stroke [11], and biased by the available annotations at training time (which are laborious to obtain). Contemporary studies [2] explore unsupervised techniques, towards building disease-agnostic models for pathology detection and delineation [3]. Being trained only with normal data, test time pathological data (out-of-distribution) are expected to result in performance degradation in the task of reconstruction, oﬀering a means of ﬂagging anomaly. Auto-encoders are a well-known approach used in literature, formulated as jointly learning to encode image …",
+      "truncated": true,
+      "rerank_score": 0.996,
+      "cited": true
+     },
+     {
+      "passage": 2,
+      "chunk_id": "2211.15527v1_c0000",
+      "paper_id": "2211.15527v1",
+      "title": "A Study of Representational Properties of Unsupervised Anomaly Detection in Brain MRI",
+      "pages": "1",
+      "url": "https://arxiv.org/abs/2211.15527v1",
+      "text": "A Study of Representational Properties of Unsupervised Anomaly Detection in Brain MRI Ayantika Das1, Arun Palla1, Keerthi Ram2, and 1 Indian Institute of Technology, Madras, India 2 Healthcare Technology Innovation Centre, IIT Madras, India Abstract. Anomaly detection in MRI is of high clinical value in imaging and diagnosis. Unsupervised methods for anomaly detection provide interesting formulations based on reconstruction or latent embedding, oﬀering a way to observe properties related to factorization. We study four existing modeling methods, and report our …",
+      "truncated": true,
+      "rerank_score": 0.993,
+      "cited": false
+     },
+     {
+      "passage": 3,
+      "chunk_id": "2412.20870v2_c0029",
+      "paper_id": "2412.20870v2",
+      "title": "SoftPatch+: Fully Unsupervised Anomaly Classification and Segmentation",
+      "pages": "14",
+      "url": "https://arxiv.org/abs/2412.20870v2",
+      "text": "learning approaches, leveraging a small amount of labeled data, could further improve the performance of anomaly detection. We are also interested in how to construct a large-scale real-world anomaly detection dataset, simulating batch defects in actual production lines. In this way, independent training and testing settings can be established to promote research in the field of fully unsupervised anomaly detection. This work was supported by the National Natural Science Foundation of China (Grant No. 62472282, Grant No. 72192821).",
+      "truncated": false,
+      "rerank_score": 0.99,
+      "cited": false
+     },
+     {
+      "passage": 4,
+      "chunk_id": "2311.02782v3_c0020",
+      "paper_id": "2311.02782v3",
+      "title": "Towards Generic Anomaly Detection and Understanding: Large-scale Visual-linguistic Model (GPT-4V) Takes the Lead",
+      "pages": "15",
+      "url": "https://arxiv.org/abs/2311.02782v3",
+      "text": "supervised or unsupervised algorithms. Supervised methods perform well when anomaly labels are available, such as AutoEncoder [79] and RobustTAD[34]. Unsupervised algorithms are suitable when obtaining anomaly labels is challenging. This has led to the development of new unsupervised methods, including DAGMM [115] and OmniAnomaly [83]. Unsupervised deep learning methods excel in time series anomaly detection, leveraging representation learning and a reconstruction approach to accurately identify anomalies without the need for labeled data [110, 47, 108]. To exploit GPT-4V for time …",
+      "truncated": true,
+      "rerank_score": 0.936,
+      "cited": false
+     },
+     {
+      "passage": 5,
+      "chunk_id": "2307.04956v2_c0001",
+      "paper_id": "2307.04956v2",
+      "title": "PKU-GoodsAD: A Supermarket Goods Dataset for Unsupervised Anomaly Detection and Segmentation",
+      "pages": "1",
+      "url": "https://arxiv.org/abs/2307.04956v2",
+      "text": "… to train models only using a large amount of easily obtainable normal samples, enabling the models to differentiate anomalous samples. At present, unsupervised anomaly detection algorithms can be divided into three categories: those based on pre-trained models, those based on pseudo anomaly generation, and those based on generative models. The first category uses a model that has learned features of normal samples from the ImageNet dataset to distinguish anomalous samples. The second category generates pseudo anomalies that resemble real anomalies …",
+      "truncated": true,
+      "rerank_score": 0.935,
+      "cited": true
+     }
+    ],
+    "timings_s": {
+     "rewrite": 14.83,
+     "dense": 0.51,
+     "bm25": 0.05,
+     "rerank": 4.39,
+     "llm": 8.86,
+     "total": 28.71
+    },
+    "model": "gemini-3.5-flash-lite"
+   }
+  }
+ ]
+}
