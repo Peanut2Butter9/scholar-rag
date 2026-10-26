@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="300" viewBox="0 0 1000 300" font-family="Helvetica, Arial, sans-serif">
+  <title>ScholarRAG pipeline</title>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4b5563"/>
+    </marker>
+  </defs>
+  <rect width="1000" height="300" fill="#ffffff"/>
+
+  <!-- offline: indeks dibangun sekali -->
+  <text x="16" y="32" font-size="13" font-weight="700" fill="#4b5563">OFFLINE · build the index once</text>
+  <g font-size="12.5" fill="#111827" text-anchor="middle">
+    <rect x="16"  y="44" width="122" height="62" rx="10" fill="#f3f4f6" stroke="#9ca3af"/>
+    <text x="77"  y="70" font-weight="700">arXiv API</text><text x="77" y="88">200 papers</text>
+    <rect x="156" y="44" width="122" height="62" rx="10" fill="#f3f4f6" stroke="#9ca3af"/>
+    <text x="217" y="70" font-weight="700">PyMuPDF parsing</text><text x="217" y="88">references removed</text>
+    <rect x="296" y="44" width="122" height="62" rx="10" fill="#f3f4f6" stroke="#9ca3af"/>
+    <text x="357" y="70" font-weight="700">3,910 chunks</text><text x="357" y="88">~350 words each</text>
+    <rect x="436" y="44" width="122" height="62" rx="10" fill="#f3f4f6" stroke="#9ca3af"/>
+    <text x="497" y="70" font-weight="700">BM25 index</text><text x="497" y="88">+ bge-small vectors</text>
+  </g>
+  <g stroke="#4b5563" stroke-width="1.6" fill="none" marker-end="url(#arrow)">
+    <line x1="138" y1="75" x2="154" y2="75"/>
+    <line x1="278" y1="75" x2="294" y2="75"/>
+    <line x1="418" y1="75" x2="434" y2="75"/>
+    <path d="M 497 106 L 497 140 L 217 140 L 217 176" stroke-dasharray="5 4"/>
+  </g>
+
+  <!-- per pertanyaan -->
+  <text x="16" y="166" font-size="13" font-weight="700" fill="#2f5bd3">PER QUESTION</text>
+  <g font-size="12.5" fill="#111827" text-anchor="middle">
+    <rect x="16"  y="178" width="122" height="80" rx="10" fill="#e8eefc" stroke="#2f5bd3"/>
+    <text x="77"  y="222" font-weight="700">Question</text>
+    <rect x="156" y="178" width="122" height="80" rx="10" fill="#e8eefc" stroke="#2f5bd3"/>
+    <text x="217" y="208" font-weight="700">BM25 top 10</text><text x="217" y="226">∪ dense top 10</text><text x="217" y="244" fill="#4b5563">≈ 16 passages</text>
+    <rect x="296" y="178" width="122" height="80" rx="10" fill="#e8eefc" stroke="#2f5bd3"/>
+    <text x="357" y="214" font-weight="700">Rerank</text><text x="357" y="232">bge-reranker-base</text>
+    <rect x="436" y="178" width="122" height="80" rx="10" fill="#e8eefc" stroke="#2f5bd3"/>
+    <text x="497" y="214" font-weight="700">Top 5</text><text x="497" y="232">passages</text>
+    <rect x="576" y="178" width="122" height="80" rx="10" fill="#e8eefc" stroke="#2f5bd3"/>
+    <text x="637" y="208" font-weight="700">Gemini</text><text x="637" y="226">answer + exact</text><text x="637" y="244">quotes, or refuse</text>
+    <rect x="716" y="178" width="122" height="80" rx="10" fill="#e8eefc" stroke="#2f5bd3"/>
+    <text x="777" y="208" font-weight="700">Quote check</text><text x="777" y="226">verbatim in the</text><text x="777" y="244">cited passage?</text>
+    <rect x="856" y="178" width="128" height="80" rx="10" fill="#e7f5ee" stroke="#1f7a4d"/>
+    <text x="920" y="208" font-weight="700">Answer with</text><text x="920" y="226">verified citations</text><text x="920" y="244">or refusal</text>
+  </g>
+  <g stroke="#4b5563" stroke-width="1.6" fill="none" marker-end="url(#arrow)">
+    <line x1="138" y1="218" x2="154" y2="218"/>
+    <line x1="278" y1="218" x2="294" y2="218"/>
+    <line x1="418" y1="218" x2="434" y2="218"/>
+    <line x1="558" y1="218" x2="574" y2="218"/>
+    <line x1="698" y1="218" x2="714" y2="218"/>
+    <line x1="838" y1="218" x2="854" y2="218"/>
+  </g>
+  <text x="16" y="288" font-size="12" fill="#4b5563">Evaluation: right passage in the top 5 for 91% / 93% of questions · 92% / 93% of answers acceptable, none wrong · 20 / 20 near-miss questions refused</text>
+</svg>

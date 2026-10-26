@@ -1,30 +1,48 @@
 # ScholarRAG
 
-**Hybrid retrieval-augmented QA with citations over scientific papers.**
+**Question answering over 200 arXiv papers on visual anomaly detection. Every answer cites the passage it comes from, the quote is checked against the source, and when the papers don't contain the answer, the system says so.**
 
-ScholarRAG answers questions about a corpus of 200 arXiv papers on **visual anomaly detection** (mainly industrial images). Every answer must cite the passage it comes from, and the system should decline when the corpus does not contain the answer.
+**▶ [Recorded demo](https://huggingface.co/spaces/peanut2butter9/scholarrag)** (replays real answers; no setup) · **Author:** Moh Hasbi Alfarizi
 
-The current stage builds the foundation everything else is measured against: the corpus, chunked text, two evaluation question sets, and baseline retrieval scores for dense and keyword search.
+![ScholarRAG pipeline](docs/architecture.svg)
 
-**Author:** Moh Hasbi Alfarizi · **Recorded demo:** <https://huggingface.co/spaces/peanut2butter9/scholarrag>
+## At a glance
+
+| Part | What |
+|---|---|
+| Corpus | 200 arXiv papers on visual anomaly detection, split into 3,910 passages |
+| Retrieval | BM25 ∪ dense (`bge-small-en-v1.5`), reranked by `bge-reranker-base`; best 5 passages |
+| Answering | Gemini (`gemini-3.5-flash-lite`) answers in JSON with an exact quote per citation, or refuses; every quote is verified in code |
+| App | FastAPI + a dependency-free web UI, rate limits, tests, and a static demo on Hugging Face Spaces |
+
+| Result (details below) | Value |
+|---|---|
+| Right passage among the 5 retrieved (LLM-written / handwritten questions) | 0.91 / 0.93 |
+| Paraphrased questions: right passage ranked first, vs BM25 alone | 0.73 vs 0.20 |
+| Acceptable answers, LLM judge checked on a manual sample (64 / 15 questions) | 0.92 / 0.93, **none wrong** |
+| Near-miss questions refused (paper in the corpus, detail not) | **20 / 20** |
+| Median time per question on a laptop | ≈ 3 s (Gemini speed varies) |
+
+<p>
+  <img src="docs/demo-answer.png" alt="An answer with two citations, each marked verbatim" width="49%">
+  <img src="docs/demo-refusal.png" alt="A refused near-miss question with the retrieved passages" width="49%">
+</p>
+
+*Left: a paraphrased question answered with two verified quotes. Right: a near-miss question refused even though the retrieved passages mention CUDA and PyTorch versions, because those belong to other papers.*
+
+**Worth a closer look**
+
+- **Evaluation first.** Two frozen question sets (64 LLM-written, 15 handwritten) and 20 near-miss questions were built before any tuning; every change is measured against them.
+- **Question wording matters.** BM25 wins on LLM-written questions because they reuse the passage's words; on paraphrased questions dense retrieval wins (Hit@1 0.60 vs 0.20), and the reranked hybrid reaches 0.73.
+- **Grounding is checked, not assumed.** A quote that is not verbatim in the cited passage is flagged in the UI; the recorded demo shows one case where Gemini dropped a parenthesis.
+- **Honest negatives.** Smaller chunks, RRF alone, a MiniLM reranker and query rewriting by default were all tested and rejected, with the numbers in the notebooks.
+- **The judge was checked too.** It agrees with a human rater on 19 of 25 sampled answers and is stricter about completeness, so 0.92 is the strict figure.
+
+**Run it locally:** create the environment and `.env` (see [Running](#running)), then `.venv/bin/uvicorn app:app --app-dir src --port 8000` and open <http://localhost:8000>.
+
+**Repository map:** `ScholarRAG_local.ipynb` (corpus, chunking, question sets, baselines) → `02`–`06` notebooks (chunk size, hybrid + rerank, answers, evaluation, query rewriting) · `src/` (pipeline `rag.py`, API `app.py`, UI) · `scripts/` (demo recording, screenshots, Space build) · `tests/` · `deploy/` (Dockerfile, demo recordings).
 
 ---
-
-## Pipeline
-
-```
-arXiv API ──► 400 papers (metadata) ──► filter + topic ranking ──► 200 PDFs
-                                                                     │
-                                  PyMuPDF parsing ──► chunks (~350 words, 60 overlap)
-                                                                     │
-                          ┌──────────────────────────────────────────┴──────────┐
-                  Dense index (bge-small-en-v1.5)                         BM25 index
-                          └─────────────────────► retrieval ◄───────────────────┘
-                                                      │
-                      evaluation on frozen question sets: Hit@k, MRR, PaperHit@10
-```
-
-Current pipeline: BM25 top 10 ∪ dense top 10, reranked by `bge-reranker-base`; the top 5 chunks go to Gemini, which answers with verified citations or refuses.
 
 ## Status
 
@@ -240,7 +258,7 @@ The project runs locally (VS Code, Python 3.12) from `~/Projects/scholar-rag`, o
 
 1. **Environment:** `uv venv --python 3.12 .venv`, then `uv pip install --python .venv/bin/python -r requirements.txt`, then register the kernel with `.venv/bin/python -m ipykernel install --user --name scholar-rag`. Python 3.15 is too new for `torch`.
 2. **API key:** copy `.env.example` to `.env` and fill in `GEMINI_API_KEY` (answers, the M5 judge, question generation, query rewriting). Never put keys in code.
-3. In VS Code, select the kernel **Python 3.12 (scholar-rag)** and **Run All**. Every step is safe to re-run:
+3. In VS Code, select the kernel **Python 3.12 (scholar-rag)** and **Run All**. Paths are relative to the project root, where VS Code and Jupyter start notebooks by default. Every step is safe to re-run:
    - the arXiv fetch is skipped when `papers_meta.jsonl` exists (set `FORCE_REFETCH = True` to fetch again; arXiv sometimes answers HTTP 429),
    - PDFs that already exist are skipped,
    - question generation (5.3) is skipped when `candidates.csv` exists, because LLM output is not deterministic,
@@ -289,6 +307,8 @@ RATE_LIMIT_PER_MINUTE=100 .venv/bin/uvicorn app:app --app-dir src --port 8000   
 .venv/bin/python scripts/record_demo.py                                          # in another
 .venv/bin/python scripts/build_space.py --static --push peanut2butter9/scholarrag
 ```
+
+Then refresh the README screenshots: serve `dist/static-space` (`cd dist/static-space && ../../.venv/bin/python -m http.server 8010 --bind 127.0.0.1`) and run `.venv/bin/python scripts/screenshot_demo.py`, which drives headless Chrome with a throwaway profile. The recorded demo also accepts links to a single example, such as `…/#q=6` for the near-miss question.
 
 Uploading needs a Hugging Face login on this machine (`.venv/bin/hf auth login`).
 
