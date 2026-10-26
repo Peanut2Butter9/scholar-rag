@@ -14,7 +14,8 @@ PORT="${PORT:-8000}"
 if [ "${NO_CODE:-0}" = "1" ]; then
   CODE=""
 else
-  CODE="${ACCESS_CODE:-$(LC_ALL=C tr -dc 'a-z0-9' </dev/urandom | head -c 6)}"
+  # "|| true": tr berhenti dengan SIGPIPE saat head selesai, dan pipefail menganggapnya error
+  CODE="${ACCESS_CODE:-$(LC_ALL=C tr -dc 'a-z0-9' </dev/urandom | head -c 6 || true)}"
 fi
 LOG_DIR="$(mktemp -d)"
 APP_PID="" TUNNEL_PID="" AWAKE_PID=""
