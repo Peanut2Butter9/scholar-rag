@@ -7,7 +7,6 @@ pandas
 numpy
 requests
 chromadb
-anthropic
 google-genai
 pydantic
 python-dotenv

@@ -256,14 +256,14 @@ Then open <http://localhost:8000>. Startup loads the embedding model, BM25 index
 The final pipeline (retrieval, prompt, citation check) is also packaged in `src/rag.py`, with the same settings as notebooks 03–04 (verified: identical prompt, identical top-5 chunks). Notebook 05 uses it, and the API (M6) will.
 
 1. **Environment:** `uv venv --python 3.12 .venv`, then `uv pip install --python .venv/bin/python -r requirements.txt`, then register the kernel with `.venv/bin/python -m ipykernel install --user --name scholar-rag`. Python 3.15 is too new for `torch`.
-2. **API keys:** copy `.env.example` to `.env` and fill in `GEMINI_API_KEY` (question generation; optional once `candidates.csv` exists) and, optionally, `ANTHROPIC_API_KEY`. Never put keys in code.
+2. **API keys:** copy `.env.example` to `.env` and fill in `GEMINI_API_KEY` (answers, the M5 judge, and question generation). Never put keys in code.
 3. In VS Code, select the kernel **Python 3.12 (scholar-rag)** and **Run All**. Every step is safe to re-run:
    - the arXiv fetch is skipped when `papers_meta.jsonl` exists (set `FORCE_REFETCH = True` to fetch again; arXiv sometimes answers HTTP 429),
    - PDFs that already exist are skipped,
-   - question generation (5.4) is skipped when `candidates.csv` exists, because LLM output is not deterministic,
+   - question generation (5.3) is skipped when `candidates.csv` exists, because LLM output is not deterministic,
    - frozen question files are never overwritten.
 
-Main dependencies: `arxiv`, `pymupdf`, `sentence-transformers`, `rank_bm25`, `scikit-learn`, `pandas`, `google-genai`, `anthropic`.
+Main dependencies: `arxiv`, `pymupdf`, `sentence-transformers`, `rank_bm25`, `scikit-learn`, `pandas`, `google-genai`, `fastapi`.
 
 ## Known limitations
 
