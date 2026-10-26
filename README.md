@@ -298,7 +298,7 @@ The pipeline (retrieval, prompt, citation check, optional rewriting) lives in `s
 
 **Recorded demo: <https://huggingface.co/spaces/peanut2butter9/scholarrag>** (static, free, always on).
 
-Hugging Face hosts Docker and Gradio Spaces on its free CPU only for PRO accounts (checked Oct 2026), so the public demo is a **static Space that replays real answers**: `scripts/record_demo.py` asks a running server 11 questions (specific, paraphrased, near-miss, out of corpus, and a broad question with and without Broaden search) and saves the responses unchanged to `deploy/demo_recordings.json`; the same web UI then replays them without a server or model calls, under a "Recorded demo" banner. One recording shows the citation check at work: Gemini dropped a parenthesis from a quote, and the UI flags it as not verbatim.
+Hugging Face hosts Docker and Gradio Spaces on its free CPU only for PRO accounts (checked Oct 2026), so the public demo is a **static Space that replays real answers**: `scripts/record_demo.py` asks a running server 11 questions (specific, paraphrased, near-miss, out of corpus, and a broad question with and without Broaden search) and saves the responses unchanged to `deploy/demo_recordings.json`; the same web UI then replays them without a server or model calls, under a "Recorded demo" banner. Visitors can type a question: a close match to a recorded question replays its answer, and anything else gets an honest "can't answer new questions here" with the three closest recorded questions. One recording shows the citation check at work: Gemini dropped a parenthesis from a quote, and the UI flags it as not verbatim.
 
 To re-record (for example on a day Gemini is faster) and re-upload:
 

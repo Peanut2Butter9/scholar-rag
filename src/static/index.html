@@ -20,6 +20,7 @@
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--text);
          font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  a { color: var(--accent); }
   main { max-width: 820px; margin: 0 auto; padding: 32px 16px 64px; }
   h1 { font-size: 26px; margin: 0 0 4px; letter-spacing: -0.01em; }
   .sub { color: var(--muted); margin: 0 0 24px; }
@@ -135,13 +136,14 @@ const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
 // mode replay: halaman statis yang memutar jawaban rekaman (disisipkan oleh scripts/build_space.py --static)
 const DEMO = window.SCHOLARRAG_DEMO || null;
+let demoAsk = null;   // di mode replay, kotak pertanyaan mencari rekaman yang paling mirip
 
 if (DEMO) {
-  $("form").style.display = "none";   // atribut hidden kalah oleh CSS display:flex
+  $("q").placeholder = "Type a question: the closest recorded one is shown, or pick an example below";
   $("broadenRow").style.display = "none";
   $("demoBanner").hidden = false;
   $("footnote").textContent = "By Moh Hasbi Alfarizi. This recorded demo sends nothing to any service. Passages are short excerpts; follow the paper titles to read the full papers on arXiv.";
-  $("demoBanner").innerHTML = `<strong>Recorded demo.</strong> The answers below were produced by the live system on ${esc(DEMO.recorded)} and are replayed here; this page makes no model calls. Gemini was slow that day, so the times shown are longer than usual. Pick a question to see its answer, citations and retrieved passages. Code and evaluation: <a href="https://github.com/Peanut2Butter9/scholar-rag" target="_blank" rel="noopener">github.com/Peanut2Butter9/scholar-rag</a>.`;
+  $("demoBanner").innerHTML = `<strong>Recorded demo.</strong> The answers below were produced by the live system on ${esc(DEMO.recorded)} and are replayed here; this page makes no model calls. Gemini was slow that day, so the times shown are longer than usual. Type a question to find the closest recorded one, or pick an example below. Code and evaluation: <a href="https://github.com/Peanut2Butter9/scholar-rag" target="_blank" rel="noopener">github.com/Peanut2Butter9/scholar-rag</a>.`;
   const play = (i) => {
     const it = DEMO.items[i];
     render(it.response, `<p class="qline"><span class="tag">${esc(it.label)}</span>${esc(it.question)}</p>`);
@@ -156,6 +158,30 @@ if (DEMO) {
   });
   const m = location.hash.match(/^#q=(\d+)$/);
   if (m && DEMO.items[+m[1]]) { play(+m[1]); $("out").scrollIntoView(); }
+
+  // kemiripan kata (Jaccard) antara pertanyaan yang diketik dan pertanyaan rekaman
+  const STOP = new Set("the and for with from that this what which how does did are was were its their they used using use into about".split(" "));
+  const words = (t) => new Set((t.toLowerCase().match(/[a-z0-9]+/g) || []).filter((w) => w.length > 2 && !STOP.has(w)));
+  const sim = (a, b) => {
+    const A = words(a), B = words(b);
+    let n = 0;
+    A.forEach((w) => { if (B.has(w)) n++; });
+    return A.size + B.size ? n / (A.size + B.size - n) : 0;
+  };
+  demoAsk = () => {
+    const q = $("q").value.trim();
+    if (q.length < 3) return;
+    const ranked = DEMO.items.map((it, i) => [sim(q, it.question), i]).sort((a, b) => b[0] - a[0]);
+    if (ranked[0][0] >= 0.75) { play(ranked[0][1]); return; }
+    const close = ranked.slice(0, 3).filter(([score]) => score > 0)
+      .map(([, i]) => `<button type="button" class="chip" data-i="${i}"><span class="tag">${esc(DEMO.items[i].label)}</span>${esc(DEMO.items[i].question)}</button>`).join("");
+    $("out").innerHTML = `<p class="qline">${esc(q)}</p><div class="card"><div class="label">Recorded demo</div>
+      <div class="answer">This page can't answer new questions: it replays ${DEMO.items.length} answers the live system gave on ${esc(DEMO.recorded)}, and no model runs here.</div>
+      <p class="hint">The live app answers any question about the 200 papers. It runs from the code on <a href="https://github.com/Peanut2Butter9/scholar-rag" target="_blank" rel="noopener">GitHub</a>, and the author shows it live in interviews.</p>
+      ${close ? `<p class="hint">Closest recorded questions:</p><div class="examples">${close}</div>` : ""}</div>`;
+    $("out").querySelectorAll("button[data-i]").forEach((b) => { b.onclick = () => play(+b.dataset.i); });
+    history.replaceState(null, "", location.pathname);   // hapus #q=... dari contoh sebelumnya
+  };
 } else {
   for (const ex of EXAMPLES) {
     const b = document.createElement("button");
@@ -196,6 +222,7 @@ function highlight(text, quotes) {
 }
 
 async function ask() {
+  if (DEMO) { demoAsk(); return; }
   const question = $("q").value.trim();
   if (question.length < 3) return;
   $("go").disabled = true;
