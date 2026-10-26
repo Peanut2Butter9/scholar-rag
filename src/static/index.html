@@ -115,6 +115,7 @@
     <button id="go" type="submit">Ask</button>
   </form>
   <label class="options" id="broadenRow"><input type="checkbox" id="broaden"> Broaden search: rewrite the question into a search query first (helps broad questions, adds 10 s or more)</label>
+  <label class="options" id="codeRow" style="display: none">Access code <input id="code" type="text" autocomplete="off" spellcheck="false" size="12"></label>
   <div class="examples" id="examples"></div>
 
   <div id="out"></div>
@@ -162,8 +163,13 @@ if (DEMO) {
     b.onclick = () => { $("q").value = ex; ask(); };
     $("examples").appendChild(b);
   }
-  // sembunyikan opsi broaden kalau server mematikannya
-  fetch("/api/health").then((r) => r.json()).then((h) => { if (!h.broaden_available) $("broadenRow").style.display = "none"; }).catch(() => {});
+  // sembunyikan opsi broaden kalau server mematikannya; tampilkan kolom kode akses kalau server memintanya
+  const urlCode = new URLSearchParams(location.search).get("code");
+  if (urlCode) $("code").value = urlCode;
+  fetch("/api/health").then((r) => r.json()).then((h) => {
+    if (!h.broaden_available) $("broadenRow").style.display = "none";
+    if (h.access_code_required) $("codeRow").style.display = "flex";
+  }).catch(() => {});
 }
 $("form").onsubmit = (e) => { e.preventDefault(); ask(); };
 $("q").addEventListener("keydown", (e) => {
@@ -200,7 +206,7 @@ async function ask() {
     $("out").innerHTML = `<p class="status">${step} 3,910 passages and reading the top 5… ${((performance.now() - t0) / 1000).toFixed(1)} s</p>`;
   }, 100);
   try {
-    const r = await fetch("/api/ask", {method: "POST", headers: {"Content-Type": "application/json"},
+    const r = await fetch("/api/ask", {method: "POST", headers: {"Content-Type": "application/json", "X-Access-Code": $("code").value.trim()},
                                        body: JSON.stringify({question, broaden})});
     const data = await r.json();
     clearInterval(tick);

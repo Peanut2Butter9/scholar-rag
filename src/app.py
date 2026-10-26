@@ -11,7 +11,9 @@ Settings (environment variables):
     DAILY_QUESTION_LIMIT    questions per rolling 24 h for the whole server (default 200; protects the Gemini quota)
     SNIPPET_WORDS           words of each passage returned to the browser (default 80; 0 = whole passage)
     ALLOW_BROADEN           1 to allow the opt-in query rewriting ("broaden search"), 0 to disable (default 1)
+    ACCESS_CODE             if set, /api/ask requires this code in the X-Access-Code header (used by scripts/share_live.sh)
 """
+import hmac
 import os
 import threading
 import time
@@ -33,6 +35,7 @@ RATE_PER_MIN = int(os.getenv("RATE_LIMIT_PER_MINUTE", "10"))
 DAILY_LIMIT = int(os.getenv("DAILY_QUESTION_LIMIT", "200"))
 SNIPPET_WORDS = int(os.getenv("SNIPPET_WORDS", "80"))
 ALLOW_BROADEN = os.getenv("ALLOW_BROADEN", "1") == "1"
+ACCESS_CODE = os.getenv("ACCESS_CODE", "")   # kosong = tanpa kode akses
 
 state = {}
 lock = threading.Lock()   # model torch dipakai satu request sekaligus
@@ -152,7 +155,7 @@ def health():
     return {"status": "ok" if state else "starting", "chunks": len(state.get("ch", [])),
             "answer_model": rag.ANSWER_MODEL, "prompt_version": rag.PROMPT_VERSION,
             "rate_limit_per_minute": RATE_PER_MIN, "daily_question_limit": DAILY_LIMIT,
-            "broaden_available": ALLOW_BROADEN}
+            "broaden_available": ALLOW_BROADEN, "access_code_required": bool(ACCESS_CODE)}
 
 
 @app.post("/api/ask", response_model=AskResponse)
@@ -160,6 +163,8 @@ def ask(req: AskRequest, request: Request):
     msg = limiter.check(client_key(request))
     if msg:
         raise HTTPException(429, msg)
+    if ACCESS_CODE and not hmac.compare_digest(request.headers.get("x-access-code", ""), ACCESS_CODE):
+        raise HTTPException(401, "This demo needs the access code that came with the link.")
     ch, retriever, client = state["ch"], state["retriever"], state["client"]
     question = req.question.strip()
     t0 = time.perf_counter()

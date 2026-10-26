@@ -114,3 +114,17 @@ def test_snippet_centres_on_quote():
     assert len(out.replace("… ", "").replace(" …", "").split()) == 40
     assert app_module.snippet("short passage", [], n_words=40) == ("short passage", False)
     assert app_module.snippet(text, [], n_words=0) == (text, False)
+
+
+def test_access_code(client, monkeypatch):
+    monkeypatch.setattr(app_module, "ACCESS_CODE", "k3y9")
+    q = {"question": "How does PatchCore work?"}
+    assert client.get("/api/health").json()["access_code_required"] is True
+    assert client.post("/api/ask", json=q).status_code == 401
+    assert client.post("/api/ask", json=q, headers={"X-Access-Code": "wrong"}).status_code == 401
+    assert client.post("/api/ask", json=q, headers={"X-Access-Code": "k3y9"}).status_code == 200
+
+
+def test_no_access_code_by_default(client):
+    assert client.get("/api/health").json()["access_code_required"] is False
+    assert client.post("/api/ask", json={"question": "How does PatchCore work?"}).status_code == 200

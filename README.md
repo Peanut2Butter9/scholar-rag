@@ -282,7 +282,7 @@ Then open <http://localhost:8000>. Startup loads the embedding model, BM25 index
 | `GET /api/health` | Status, number of indexed chunks, answer model, prompt version and limits |
 | `GET /` | The web UI (`src/static/index.html`) |
 
-Settings, as environment variables: `RATE_LIMIT_PER_MINUTE` (questions per visitor per minute, default 10), `DAILY_QUESTION_LIMIT` (whole server per 24 h, default 200, protects the Gemini quota), `SNIPPET_WORDS` (excerpt length, default 80; 0 = whole passage), `ALLOW_BROADEN` (default 1) and `SCHOLARRAG_DATA` (data folder, default `data/`).
+Settings, as environment variables: `RATE_LIMIT_PER_MINUTE` (questions per visitor per minute, default 10), `DAILY_QUESTION_LIMIT` (whole server per 24 h, default 200, protects the Gemini quota), `SNIPPET_WORDS` (excerpt length, default 80; 0 = whole passage), `ALLOW_BROADEN` (default 1), `ACCESS_CODE` (if set, questions need this code; used when sharing) and `SCHOLARRAG_DATA` (data folder, default `data/`).
 
 The pipeline (retrieval, prompt, citation check, optional rewriting) lives in `src/rag.py`, with the same settings as notebooks 03–04 (verified: identical prompt, identical top-5 chunks); notebooks 05–06 and the API use it.
 
@@ -314,9 +314,19 @@ Uploading needs a Hugging Face login on this machine (`.venv/bin/hf auth login`)
 
 **Live app on a Space (needs Hugging Face PRO).** Everything is ready: `scripts/build_space.py` (without `--static`) assembles `dist/space/` with the Dockerfile (`deploy/Dockerfile`), the server code, the pinned `requirements-app.txt` and the 15 MB of data the server needs (no PDFs); the image downloads both models at build time. With a PRO account: run `.venv/bin/python scripts/build_space.py --push USER/SPACE`, then add the secret `GEMINI_API_KEY` under **Settings → Variables and secrets** (the key is never uploaded with the files) and wait 5–10 minutes for the first build. The Dockerfile has not been built yet, since Docker is not installed on the development machine.
 
+### Sharing the live app for a while
+
+To let someone else type questions into the real system (for example an interviewer), share the app running on this laptop through a temporary public link:
+
+```bash
+scripts/share_live.sh
+```
+
+It starts the app, opens a Cloudflare quick tunnel (no account needed; `brew install cloudflared` once), keeps the Mac awake, and prints a link such as `https://random-words.trycloudflare.com/?code=ab12cd`. The link carries a random access code, so only people you send it to can ask questions, and the usual rate limits still apply. **Press Ctrl+C to stop:** the app and the tunnel shut down and the link stops working at once. Nothing runs in between, and each start gives a new link. Options: `ACCESS_CODE=mycode` to choose the code, `NO_CODE=1` to share without one.
+
 ### Presenting it
 
-1. Before the interview, start the live app locally (`.venv/bin/uvicorn app:app --app-dir src --port 8000`, ready in about 20 s) and ask one question to warm up Gemini.
+1. Before the interview, start the live app locally (`.venv/bin/uvicorn app:app --app-dir src --port 8000`, ready in about 20 s), or `scripts/share_live.sh` if the interviewer should type questions too, and ask one question to warm up Gemini.
 2. Show the **About** panel for the pipeline and evaluation, then a specific question, a near-miss refusal and a broad question with Broaden search.
 3. If the laptop, the network or Gemini fails, switch to the recorded demo link above.
 
