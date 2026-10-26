@@ -2,7 +2,7 @@
 
 **Question answering over 200 arXiv papers on visual anomaly detection. Every answer cites the passage it comes from, the quote is checked against the source, and when the papers don't contain the answer, the system says so.**
 
-**▶ [Recorded demo](https://huggingface.co/spaces/peanut2butter9/scholarrag)** (replays real answers; no setup) · **Author:** Moh Hasbi Alfarizi
+**▶ [Recorded demo](https://huggingface.co/spaces/peanut2butter9/scholarrag)** (replays real answers; no setup) · **Live system:** on request, through a temporary link ([contact](https://peanut2butter9.github.io)) · **Author:** Moh Hasbi Alfarizi
 
 ![ScholarRAG pipeline](docs/architecture.svg)
 

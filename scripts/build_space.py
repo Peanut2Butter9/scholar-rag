@@ -37,6 +37,8 @@ Retrieval-augmented question answering over 200 arXiv papers on visual anomaly d
 This Space replays answers recorded from the live system (FastAPI + `bge-small-en-v1.5` / BM25 retrieval, `bge-reranker-base`, Gemini `gemini-3.5-flash-lite`); it makes no model calls. The "About" panel on the page lists the evaluation results.
 
 Code, notebooks and the full evaluation: https://github.com/Peanut2Butter9/scholar-rag
+
+**Live version on request.** The live system (which answers any question about the papers) runs on the author's machine and is shared through a temporary link. To try it, contact the author, Moh Hasbi Alfarizi (peanut2butter9): hasbialfrz61@gmail.com · https://www.linkedin.com/in/mhasbiarz · https://peanut2butter9.github.io
 """
 
 # hanya file yang dibutuhkan server; PDF dan file eksperimen tidak ikut

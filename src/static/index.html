@@ -137,13 +137,15 @@ const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({"&": "&amp;", "<": "&l
 // mode replay: halaman statis yang memutar jawaban rekaman (disisipkan oleh scripts/build_space.py --static)
 const DEMO = window.SCHOLARRAG_DEMO || null;
 let demoAsk = null;   // di mode replay, kotak pertanyaan mencari rekaman yang paling mirip
+// kontak penulis untuk meminta link live sementara (data publik dari situs pribadi)
+const CONTACT = `<a href="mailto:hasbialfrz61@gmail.com?subject=ScholarRAG%20live%20demo">email</a> · <a href="https://www.linkedin.com/in/mhasbiarz" target="_blank" rel="noopener">LinkedIn</a> · <a href="https://peanut2butter9.github.io" target="_blank" rel="noopener">website</a>`;
 
 if (DEMO) {
   $("q").placeholder = "Type a question: the closest recorded one is shown, or pick an example below";
   $("broadenRow").style.display = "none";
   $("demoBanner").hidden = false;
   $("footnote").textContent = "By Moh Hasbi Alfarizi. This recorded demo sends nothing to any service. Passages are short excerpts; follow the paper titles to read the full papers on arXiv.";
-  $("demoBanner").innerHTML = `<strong>Recorded demo.</strong> The answers below were produced by the live system on ${esc(DEMO.recorded)} and are replayed here; this page makes no model calls. Gemini was slow that day, so the times shown are longer than usual. Type a question to find the closest recorded one, or pick an example below. Code and evaluation: <a href="https://github.com/Peanut2Butter9/scholar-rag" target="_blank" rel="noopener">github.com/Peanut2Butter9/scholar-rag</a>.`;
+  $("demoBanner").innerHTML = `<strong>Recorded demo.</strong> The answers below were produced by the live system on ${esc(DEMO.recorded)} and are replayed here; this page makes no model calls. Gemini was slow that day, so the times shown are longer than usual. Type a question to find the closest recorded one, or pick an example below. Code and evaluation: <a href="https://github.com/Peanut2Butter9/scholar-rag" target="_blank" rel="noopener">github.com/Peanut2Butter9/scholar-rag</a>.<br><strong>Want to ask your own questions?</strong> The live system runs on request: contact the author, Moh Hasbi Alfarizi (peanut2butter9), for a temporary link (${CONTACT}).`;
   const play = (i) => {
     const it = DEMO.items[i];
     render(it.response, `<p class="qline"><span class="tag">${esc(it.label)}</span>${esc(it.question)}</p>`);
@@ -177,7 +179,7 @@ if (DEMO) {
       .map(([, i]) => `<button type="button" class="chip" data-i="${i}"><span class="tag">${esc(DEMO.items[i].label)}</span>${esc(DEMO.items[i].question)}</button>`).join("");
     $("out").innerHTML = `<p class="qline">${esc(q)}</p><div class="card"><div class="label">Recorded demo</div>
       <div class="answer">This page can't answer new questions: it replays ${DEMO.items.length} answers the live system gave on ${esc(DEMO.recorded)}, and no model runs here.</div>
-      <p class="hint">The live app answers any question about the 200 papers. It runs from the code on <a href="https://github.com/Peanut2Butter9/scholar-rag" target="_blank" rel="noopener">GitHub</a>, and the author shows it live in interviews.</p>
+      <p class="hint">The live system answers any question about the 200 papers. It runs on request: contact the author, Moh Hasbi Alfarizi (peanut2butter9), for a temporary link (${CONTACT}). The code is on <a href="https://github.com/Peanut2Butter9/scholar-rag" target="_blank" rel="noopener">GitHub</a>.</p>
       ${close ? `<p class="hint">Closest recorded questions:</p><div class="examples">${close}</div>` : ""}</div>`;
     $("out").querySelectorAll("button[data-i]").forEach((b) => { b.onclick = () => play(+b.dataset.i); });
     history.replaceState(null, "", location.pathname);   // hapus #q=... dari contoh sebelumnya
