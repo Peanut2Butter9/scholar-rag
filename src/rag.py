@@ -1,16 +1,18 @@
 """ScholarRAG pipeline: retrieval (BM25 ∪ dense → bge-reranker) and answers with citations.
 
 Same settings and prompt as 03_hybrid_rerank.ipynb (final setup) and 04_answers_citations.ipynb
-(PROMPT_VERSION v1), so results are comparable. Used by 05_evaluation.ipynb and, later, the API (M6).
+(PROMPT_VERSION v1), so results are comparable. Used by 05_evaluation.ipynb, 06_query_rewriting.ipynb and
+the API (src/app.py). Query rewriting (rewrite_query) is optional; 06_query_rewriting.ipynb explains why it is off by default.
 """
-import json, re, time, unicodedata
+import json, os, re, time, unicodedata
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 from pydantic import BaseModel, Field
 
-BASE = Path.home() / "Projects" / "scholar-rag" / "data"
+# folder data: bawaannya data/ di root proyek; di server diatur lewat SCHOLARRAG_DATA
+BASE = Path(os.getenv("SCHOLARRAG_DATA", Path(__file__).resolve().parent.parent / "data"))
 QP = "Represent this sentence for searching relevant passages: "   # prefix query khusus model bge
 
 
@@ -44,19 +46,31 @@ class Retriever:
         self.bm25 = BM25Okapi([tok(t) for t in ch.text])
         self.ce = CrossEncoder("BAAI/bge-reranker-base", max_length=512)
 
-    def retrieve(self, question):
-        """Return (chunk positions, rerank scores, seconds per stage)."""
-        t = {}
+    def retrieve(self, question, search_query=None, rerank_with="question"):
+        """Return (chunk positions, rerank scores, seconds per stage).
+
+        Without search_query this is the M3 setup. With a rewritten search_query, the candidate pool is the union
+        of the pools for the question and for the search query; rerank_with ("question" or "search") picks the
+        text the reranker compares the passages with.
+        """
+        queries = [question]
+        if search_query and norm(search_query) != norm(question):
+            queries.append(search_query)
+        t = {"dense": 0.0, "bm25": 0.0}
+        pool = []
+        for q in queries:
+            t0 = time.perf_counter()
+            qv = self.emb.encode([QP + q], normalize_embeddings=True)[0]
+            dense = np.argsort(-(self.E @ qv))[:self.pool_k].tolist()
+            t["dense"] += time.perf_counter() - t0
+            t0 = time.perf_counter()
+            sparse = np.argsort(-self.bm25.get_scores(tok(q)))[:self.pool_k].tolist()
+            t["bm25"] += time.perf_counter() - t0
+            pool += sparse + dense
         t0 = time.perf_counter()
-        qv = self.emb.encode([QP + question], normalize_embeddings=True)[0]
-        dense = np.argsort(-(self.E @ qv))[:self.pool_k].tolist()
-        t["dense"] = time.perf_counter() - t0
-        t0 = time.perf_counter()
-        sparse = np.argsort(-self.bm25.get_scores(tok(question)))[:self.pool_k].tolist()
-        t["bm25"] = time.perf_counter() - t0
-        t0 = time.perf_counter()
-        pool = list(dict.fromkeys(sparse + dense))
-        scores = self.ce.predict([(question, self.ch.text.iat[i]) for i in pool], batch_size=16, show_progress_bar=False)
+        pool = list(dict.fromkeys(pool))
+        rq = search_query if (rerank_with == "search" and len(queries) > 1) else question
+        scores = self.ce.predict([(rq, self.ch.text.iat[i]) for i in pool], batch_size=16, show_progress_bar=False)
         order = np.argsort(-scores)[:self.top_k]
         t["rerank"] = time.perf_counter() - t0
         return [pool[j] for j in order], [float(scores[j]) for j in order], t
@@ -125,6 +139,32 @@ def answer(client, ch, question, idxs, model=ANSWER_MODEL, tries=5):
             "parsed": r.parsed.model_dump() if r.parsed is not None else None, "raw": r.text,
             "latency_s": round(time.perf_counter() - t0, 2),
             "tokens_in": u.prompt_token_count, "tokens_out": u.candidates_token_count}
+
+
+# --- query rewriting (opsional) ---
+
+REWRITE_VERSION = "r2"
+REWRITE_SYSTEM = """You turn a user's question about research papers on visual anomaly detection into one search query for a keyword and semantic search engine over paper passages.
+- Put the specific topic or domain first (for example medical imaging, video surveillance, logical anomalies, 3D point clouds) and add 2-4 common synonyms or related terms for it (for example "medical imaging MRI CT X-ray pathology").
+- Keep every specific name: methods, models, datasets, benchmarks, acronyms, numbers.
+- Drop conversational filler and generic words that every paper in the collection shares, such as "anomaly detection research", "current", "approaches".
+- If the question is already precise and names a method or dataset, return it almost unchanged.
+- English, at most 20 words."""
+
+
+class SearchQuery(BaseModel):
+    query: str = Field(description="The search query, at most 20 words")
+
+
+def rewrite_query(client, question, model=ANSWER_MODEL, tries=5):
+    """Ubah pertanyaan percakapan menjadi kueri pencarian singkat. Mengembalikan (query, detik)."""
+    from google.genai import types
+    config = types.GenerateContentConfig(system_instruction=REWRITE_SYSTEM, temperature=0,
+                                         response_mime_type="application/json", response_schema=SearchQuery)
+    t0 = time.perf_counter()
+    r = call_with_retry(lambda: client.models.generate_content(model=model, contents=question, config=config), tries=tries)
+    q = r.parsed.query.strip() if r.parsed is not None and r.parsed.query.strip() else question
+    return q, round(time.perf_counter() - t0, 2)
 
 
 def check_citations(ch, parsed, idxs):

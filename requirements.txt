@@ -16,3 +16,4 @@ nbclient
 nbformat
 fastapi
 uvicorn[standard]
+pytest

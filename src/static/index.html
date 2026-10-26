@@ -58,6 +58,20 @@
   .timings { font-size: 13px; color: var(--muted); }
   .error { color: var(--warn); }
   .status { color: var(--muted); font-size: 14px; }
+  .options { display: flex; align-items: center; gap: 8px; margin: 10px 0 0; font-size: 14px; color: var(--muted); }
+  .options input { accent-color: var(--accent); }
+  .about { margin: 0 0 24px; }
+  .about summary { font-size: 14px; }
+  .about .card { margin: 10px 0 0; font-size: 15px; }
+  .about h3 { font-size: 15px; margin: 14px 0 6px; }
+  .about h3:first-child { margin-top: 0; }
+  .about table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .about td { padding: 5px 8px 5px 0; border-top: 1px solid var(--border); vertical-align: top; }
+  .about td.num { white-space: nowrap; font-weight: 600; text-align: right; }
+  .about ul { margin: 6px 0 0; padding-left: 18px; }
+  .hint { margin: 10px 0 0; font-size: 14px; color: var(--text); }
+  .searched { font-size: 14px; color: var(--muted); margin: 0 0 12px; }
+  .footnote { margin-top: 40px; font-size: 13px; color: var(--muted); border-top: 1px solid var(--border); padding-top: 14px; }
 </style>
 </head>
 <body>
@@ -65,13 +79,42 @@
   <h1>ScholarRAG</h1>
   <p class="sub">Ask about 200 arXiv papers on visual anomaly detection. Every answer cites the passage it comes from, or says the papers don't contain it.</p>
 
+  <details class="about">
+    <summary>About this demo and its evaluation results</summary>
+    <div class="card">
+      <h3>How it works</h3>
+      <ul>
+        <li>Corpus: 200 arXiv papers on visual anomaly detection, split into 3,910 passages of about 350 words.</li>
+        <li>Retrieval: BM25 top 10 ∪ dense top 10 (<code>bge-small-en-v1.5</code>), reranked by <code>bge-reranker-base</code>; the best 5 passages go to the model.</li>
+        <li>Answer: Gemini (<code>gemini-3.5-flash-lite</code>) answers only from those passages, with an exact quote per citation, or refuses. Every quote is checked in code (✓ verbatim).</li>
+      </ul>
+      <h3>Evaluation</h3>
+      <table>
+        <tr><td>Right passage among the 5 retrieved (LLM-written / handwritten questions)</td><td class="num">0.91 / 0.93</td></tr>
+        <tr><td>Right passage ranked first on paraphrased (handwritten) questions, vs BM25 alone</td><td class="num">0.73 vs 0.20</td></tr>
+        <tr><td>Acceptable answers, judged by an LLM and checked on a manual sample (64 / 15 questions)</td><td class="num">0.92 / 0.93</td></tr>
+        <tr><td>Incorrect answers</td><td class="num">0</td></tr>
+        <tr><td>Near-miss questions (paper in corpus, detail not) refused</td><td class="num">20 / 20</td></tr>
+        <tr><td>Median time per question on a laptop (Gemini speed varies)</td><td class="num">≈ 3 s</td></tr>
+      </table>
+      <h3>Known limits</h3>
+      <ul>
+        <li>Built for specific questions. Broad, conversational questions can be refused; naming the topic precisely helps, and "Broaden search" rewrites the question first (slower).</li>
+        <li>The corpus is mostly industrial images; other domains such as medical imaging are covered by only a few papers.</li>
+      </ul>
+    </div>
+  </details>
+
   <form id="form">
     <textarea id="q" placeholder="e.g. Which two benchmark datasets are used to validate the Iterative Refinement Process (IRP)?" required minlength="3" maxlength="500"></textarea>
     <button id="go" type="submit">Ask</button>
   </form>
+  <label class="options" id="broadenRow"><input type="checkbox" id="broaden"> Broaden search: rewrite the question into a search query first (helps broad questions, adds 10 s or more)</label>
   <div class="examples" id="examples"></div>
 
   <div id="out"></div>
+
+  <p class="footnote">By Moh Hasbi Alfarizi. Questions are sent to Google Gemini on its free tier, which Google may use to improve its products, so please don't enter personal information. Passages are short excerpts; follow the paper titles to read the full papers on arXiv.</p>
 </main>
 
 <script>
@@ -79,7 +122,8 @@ const EXAMPLES = [
   "Which two benchmark datasets are used to validate the Iterative Refinement Process (IRP)?",
   "Is the footage in the UBnormal benchmark recorded by real cameras, or is it made some other way?",
   "What auxiliary loss is minimized alongside the Real-NVP loss for visual anomaly detection on mobile robots?",
-  "How much GPU memory does Dinomaly need during training?",
+  "Which methods are used for unsupervised anomaly detection in medical images such as brain MRI?",
+  "Which CUDA and PyTorch versions were used when measuring the inference time of TMUAD?",
 ];
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
@@ -91,6 +135,8 @@ for (const ex of EXAMPLES) {
   $("examples").appendChild(b);
 }
 $("form").onsubmit = (e) => { e.preventDefault(); ask(); };
+// sembunyikan opsi broaden kalau server mematikannya
+fetch("/api/health").then((r) => r.json()).then((h) => { if (!h.broaden_available) $("broadenRow").style.display = "none"; }).catch(() => {});
 $("q").addEventListener("keydown", (e) => {
   if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); ask(); }
 });
@@ -118,13 +164,15 @@ async function ask() {
   const question = $("q").value.trim();
   if (question.length < 3) return;
   $("go").disabled = true;
+  const broaden = $("broaden").checked;
   const t0 = performance.now();
   const tick = setInterval(() => {
-    $("out").innerHTML = `<p class="status">Searching 3,910 passages and reading the top 5… ${((performance.now() - t0) / 1000).toFixed(1)} s</p>`;
+    const step = broaden ? "Rewriting the question, then searching" : "Searching";
+    $("out").innerHTML = `<p class="status">${step} 3,910 passages and reading the top 5… ${((performance.now() - t0) / 1000).toFixed(1)} s</p>`;
   }, 100);
   try {
     const r = await fetch("/api/ask", {method: "POST", headers: {"Content-Type": "application/json"},
-                                       body: JSON.stringify({question})});
+                                       body: JSON.stringify({question, broaden})});
     const data = await r.json();
     clearInterval(tick);
     if (!r.ok) throw new Error(data.detail ? (typeof data.detail === "string" ? data.detail : JSON.stringify(data.detail)) : r.statusText);
@@ -140,7 +188,7 @@ async function ask() {
 function render(d) {
   const quotesBy = {};
   for (const c of d.citations) (quotesBy[c.passage] ||= []).push(c.quote);
-  let html = "";
+  let html = d.search_query ? `<p class="searched">Searched for: <em>${esc(d.search_query)}</em></p>` : "";
   if (d.answerable) {
     const refs = [...new Set(d.citations.map((c) => c.passage))]
       .map((n) => `<a class="ref" href="#p${n}">${n}</a>`).join("");
@@ -150,7 +198,8 @@ function render(d) {
     html += `<div class="card"><div class="label">Answer</div><div class="answer">${esc(d.answer)}${refs}</div>${cites}</div>`;
   } else {
     html += `<div class="card refusal"><div class="label">No answer</div>
-      <div class="answer">The papers don't state this. The closest passages are below.</div></div>`;
+      <div class="answer">The papers don't state this. The closest passages are below.</div>
+      <p class="hint">Tip: name the topic precisely (for example "…in medical images such as brain MRI")${d.search_query ? "" : ", or tick Broaden search"}.</p></div>`;
   }
   const passages = d.passages.map((p) => `
     <div class="passage${p.cited ? " cited" : ""}" id="p${p.passage}">
@@ -159,16 +208,16 @@ function render(d) {
       <div class="p-meta">arXiv ${esc(p.paper_id)} · pages ${esc(p.pages)} · rerank ${p.rerank_score.toFixed(2)}${p.cited ? " · cited" : ""}</div>
       <p class="p-text">${highlight(p.text, quotesBy[p.passage] || [])}</p>
     </div>`).join("");
-  html += `<div class="card"><details ${d.answerable ? "" : "open"}><summary>Retrieved passages (${d.passages.length})</summary>${passages}</details></div>`;
+  html += `<div class="card"><details ${d.answerable ? "" : "open"}><summary>Retrieved passages (${d.passages.length} excerpts)</summary>${passages}</details></div>`;
   const t = d.timings_s;
-  html += `<p class="timings">retrieval ${(t.dense + t.bm25).toFixed(2)} s · rerank ${t.rerank.toFixed(2)} s · LLM ${t.llm.toFixed(2)} s · total ${t.total.toFixed(2)} s · ${esc(d.model)}</p>`;
+  html += `<p class="timings">${t.rewrite !== undefined ? `rewrite ${t.rewrite.toFixed(2)} s · ` : ""}retrieval ${(t.dense + t.bm25).toFixed(2)} s · rerank ${t.rerank.toFixed(2)} s · LLM ${t.llm.toFixed(2)} s · total ${t.total.toFixed(2)} s · ${esc(d.model)}</p>`;
   $("out").innerHTML = html;
   // gulir kotak teks passage ke kutipan pertama supaya highlight langsung terlihat
   const scrollToMarks = () => document.querySelectorAll(".p-text").forEach((box) => {
     const m = box.querySelector("mark");
     if (m) box.scrollTop = m.offsetTop - 8;
   });
-  document.querySelector("details").addEventListener("toggle", scrollToMarks);
+  $("out").querySelector("details").addEventListener("toggle", scrollToMarks);
   scrollToMarks();
 }
 </script>

@@ -37,7 +37,7 @@ Current pipeline: BM25 top 10 ∪ dense top 10, reranked by `bge-reranker-base`;
 | M3 | Hybrid search (RRF) + cross-encoder reranker | ✅ BM25 ∪ dense top 10 → `bge-reranker-base` (level with BM25 on set A, far ahead on set B1) |
 | M4 | Answers with citations and refusal | ✅ Gemini, verified quotes; 20 / 20 unanswerable refused |
 | M5 | Answer evaluation (citations, refusals, cost, latency) | ✅ acceptable 0.92 (A) / 0.93 (B1), 0 incorrect, no hallucinated refusals |
-| M6 | FastAPI + UI, deployment | 🔧 local API + web UI done (`src/app.py`); public deployment pending |
+| M6 | FastAPI + UI, deployment | ✅ API + web UI, tests, rate limit, Hugging Face Space bundle · ⏳ upload to a Space (needs your account) |
 
 ## Results so far
 
@@ -236,34 +236,56 @@ The project runs locally (VS Code, Python 3.12) from `~/Projects/scholar-rag`, o
 | `03_hybrid_rerank.ipynb` | M3: RRF fusion and two cross-encoder rerankers at 350 and 250 words (sections 1–6), candidate-pool fix (sections 7–8). First run downloads ~1.2 GB of models; ~35 min on an M1 |
 | `04_answers_citations.ipynb` | M4: retrieval → Gemini answers with citations or refusal, citation checks. Needs `GEMINI_API_KEY`; contexts and answers are cached, so a re-run does not call the LLM again |
 | `05_evaluation.ipynb` | M5: out-of-corpus refusal (set C), LLM judge of answer correctness, blind manual sample, refusal accuracy, cost and latency. Resumable: stops cleanly when the judge's daily quota runs out |
-
-### Web app (M6)
-
-Ask questions in the browser, with answers, verified citations and the retrieved passages:
-
-```bash
-.venv/bin/uvicorn app:app --app-dir src --port 8000
-```
-
-Then open <http://localhost:8000>. Startup loads the embedding model, BM25 index and reranker (about 20 s); each question then takes about 5–9 s on an M1 (rerank 2–5 s, Gemini 1–3 s). Needs `GEMINI_API_KEY` in `.env` and the data and index files in `data/`.
-
-| Endpoint | |
-|---|---|
-| `POST /api/ask` | `{"question": "..."}` → `answerable`, `answer`, `citations` (passage number, quote, `verified`), the 5 `passages` (title, arXiv link, pages, rerank score, text) and `timings_s` |
-| `GET /api/health` | Status, number of indexed chunks, answer model and prompt version |
-| `GET /` | The web UI (`src/static/index.html`) |
-
-The final pipeline (retrieval, prompt, citation check) is also packaged in `src/rag.py`, with the same settings as notebooks 03–04 (verified: identical prompt, identical top-5 chunks). Notebook 05 uses it, and the API (M6) will.
+| `06_query_rewriting.ipynb` | Query rewriting for broad questions: five broad questions, three retrieval variants, rewrite latency; why rewriting is opt-in |
 
 1. **Environment:** `uv venv --python 3.12 .venv`, then `uv pip install --python .venv/bin/python -r requirements.txt`, then register the kernel with `.venv/bin/python -m ipykernel install --user --name scholar-rag`. Python 3.15 is too new for `torch`.
-2. **API keys:** copy `.env.example` to `.env` and fill in `GEMINI_API_KEY` (answers, the M5 judge, and question generation). Never put keys in code.
+2. **API key:** copy `.env.example` to `.env` and fill in `GEMINI_API_KEY` (answers, the M5 judge, question generation, query rewriting). Never put keys in code.
 3. In VS Code, select the kernel **Python 3.12 (scholar-rag)** and **Run All**. Every step is safe to re-run:
    - the arXiv fetch is skipped when `papers_meta.jsonl` exists (set `FORCE_REFETCH = True` to fetch again; arXiv sometimes answers HTTP 429),
    - PDFs that already exist are skipped,
    - question generation (5.3) is skipped when `candidates.csv` exists, because LLM output is not deterministic,
    - frozen question files are never overwritten.
 
-Main dependencies: `arxiv`, `pymupdf`, `sentence-transformers`, `rank_bm25`, `scikit-learn`, `pandas`, `google-genai`, `fastapi`.
+Main dependencies: `arxiv`, `pymupdf`, `sentence-transformers`, `rank_bm25`, `scikit-learn`, `pandas`, `google-genai`, `fastapi`. The server alone needs only `requirements-app.txt` (pinned versions).
+
+### Web app (M6)
+
+Ask questions in the browser, with answers, verified citations and short excerpts of the retrieved passages:
+
+```bash
+.venv/bin/uvicorn app:app --app-dir src --port 8000
+```
+
+Then open <http://localhost:8000>. Startup loads the embedding model, BM25 index and reranker (about 20 s); a question then takes about 3–12 s on an M1, mostly Gemini, whose speed varies from day to day. The page has an **About** panel with the pipeline and the evaluation results, and an opt-in **Broaden search** switch that rewrites the question into a search query first (see `06_query_rewriting.ipynb`; adds 10 s or more).
+
+| Endpoint | |
+|---|---|
+| `POST /api/ask` | `{"question": "...", "broaden": false}` → `answerable`, `answer`, `citations` (passage number, quote, `verified`), the 5 `passages` (title, arXiv link, pages, rerank score, ~80-word excerpt), `search_query` (when broadened) and `timings_s` |
+| `GET /api/health` | Status, number of indexed chunks, answer model, prompt version and limits |
+| `GET /` | The web UI (`src/static/index.html`) |
+
+Settings, as environment variables: `RATE_LIMIT_PER_MINUTE` (questions per visitor per minute, default 10), `DAILY_QUESTION_LIMIT` (whole server per 24 h, default 200, protects the Gemini quota), `SNIPPET_WORDS` (excerpt length, default 80; 0 = whole passage), `ALLOW_BROADEN` (default 1) and `SCHOLARRAG_DATA` (data folder, default `data/`).
+
+The pipeline (retrieval, prompt, citation check, optional rewriting) lives in `src/rag.py`, with the same settings as notebooks 03–04 (verified: identical prompt, identical top-5 chunks); notebooks 05–06 and the API use it.
+
+### Tests
+
+```bash
+.venv/bin/python -m pytest -q tests
+```
+
+`tests/test_app.py` checks the API with a fake retriever and fake Gemini calls (no models, no quota): verified and unverified citations, refusals, broaden search, input validation, rate limits and excerpts.
+
+### Deploy to Hugging Face Spaces
+
+The demo runs on a free CPU Space (Docker). `scripts/build_space.py` assembles `dist/space/` with the Dockerfile (`deploy/Dockerfile`), the server code, the pinned `requirements-app.txt` and the 15 MB of data the server needs (chunks and the cached embeddings; no PDFs). The image downloads both models at build time.
+
+1. Create a Hugging Face account, then log in on this machine: `.venv/bin/hf auth login` (paste a token with write access).
+2. Build and upload: `.venv/bin/python scripts/build_space.py --push YOUR_USERNAME/scholarrag` (creates the Space if it does not exist).
+3. In the Space, open **Settings → Variables and secrets** and add the secret `GEMINI_API_KEY`. The key is never uploaded with the files.
+4. Wait for the build (about 5–10 minutes the first time), then open the Space URL.
+
+Free Spaces go to sleep after a period without visits and take a minute or two to wake up, so open the link a few minutes before presenting. If the Space is down, run the app locally as above.
 
 ## Known limitations
 
@@ -274,7 +296,8 @@ Main dependencies: `arxiv`, `pymupdf`, `sentence-transformers`, `rank_bm25`, `sc
 - **Lost content.** Tables, equations and very short text blocks are dropped during parsing.
 - **Heuristic cleaning.** A few bibliography fragments may remain (~3.5% of chunks match a citation pattern, some of them legitimate).
 - **Small evaluation set.** With 64 questions, one question ≈ 1.6 percentage points, so differences of 2–3 points are noise. With the 15 handwritten questions, one question ≈ 6.7 points.
-- **Broad and conversational questions.** The system is built and evaluated for specific factual questions (5 passages, 1–3 sentence answers); none of the question sets contains an overview question. Asked "I am interested to study about the unsupervised medical anomaly detection, what are their current research?", it refuses: the wording lets "unsupervised anomaly detection" dominate, so all 5 retrieved passages are industrial or general, although the corpus does hold a few medical papers (e.g. brain MRI, medical vision-language models). The specific version, "Which methods are used for unsupervised anomaly detection in medical images such as brain MRI?", retrieves those papers and is answered with verified citations. Retrieval can also return several chunks of the same paper (4 of 5 passages from 2 papers in that example), and the corpus covers medical imaging only thinly.
+- **Broad and conversational questions.** The system is built and evaluated for specific factual questions (5 passages, 1–3 sentence answers); none of the question sets contains an overview question. Asked "I am interested to study about the unsupervised medical anomaly detection, what are their current research?", it refuses: the wording lets "unsupervised anomaly detection" dominate, so all 5 retrieved passages are industrial or general, although the corpus does hold a few medical papers (e.g. brain MRI, medical vision-language models). The specific version, "Which methods are used for unsupervised anomaly detection in medical images such as brain MRI?", retrieves those papers and is answered with verified citations. Retrieval can also return several chunks of the same paper (4 of 5 passages from 2 papers in that example), and the corpus covers medical imaging only thinly. Query rewriting (opt-in "Broaden search") answers that medical question with verified citations, but over five broad questions it helps one topic, slightly hurts another and adds 10–26 s (`06_query_rewriting.ipynb`), so it is off by default.
+- **Gemini latency varies.** The answer call usually takes 1–3 s but took 8–14 s on some days; the free tier gives no latency guarantee.
 - **Borderline near-miss question.** hu017 asks how much GPU memory Dinomaly needs for training; the paper only says it ran on RTX3090 GPUs (24GB). The capacity is not the requirement, so the question stays unanswerable, but an answer citing "24GB" would not be plainly wrong. Reword it in `questions_handwritten_v2.csv`.
 - **Partly LLM-assisted set B.** Several handwritten questions were reworded with help from Claude and then rewritten by the author (earlier versions in `data/_backup/`); unanswerable questions were checked against the full PDF text by keyword search, which is strong evidence but not proof.
 
@@ -282,8 +305,8 @@ Main dependencies: `arxiv`, `pymupdf`, `sentence-transformers`, `rank_bm25`, `sc
 
 1. **Question sets v2:** widen the references for q046 and h009, reword hu017, and split two-part questions (or require both parts explicitly); save as `questions_v2.csv` / `questions_handwritten_v2.csv`.
 2. **Broad questions:**
-   - **Query rewriting:** an LLM turns a conversational question into a short search query (e.g. "unsupervised anomaly detection medical images") before retrieval.
+   - ~~**Query rewriting**~~ done as an opt-in switch (`06_query_rewriting.ipynb`): it fixes the medical example but is mixed over five broad questions and slow.
    - **Source diversity:** cap retrieved passages at one chunk per paper (or use maximal marginal relevance), so the context covers more papers.
    - **Overview mode:** for broad questions, retrieve 10–15 passages from different papers and use a prompt that summarises across papers with a citation per claim. Costs more latency and tokens; needs a few overview questions in the evaluation sets.
    - Check that set A and B1 scores do not drop.
-3. **M6 deployment:** host the API and UI publicly. Needs about 2 GB of RAM for the models, the `data/` index files and the API key as a server secret; reranking takes 2–5 s per question on an M1, so a public demo needs fewer pairs, half precision or a GPU, plus a rate limit to protect the Gemini quota.
+3. **Publish the demo:** the Space bundle, Dockerfile, pinned requirements and rate limit are ready; what is left is creating the Space under your account, uploading (`scripts/build_space.py --push`) and adding the `GEMINI_API_KEY` secret (see *Deploy to Hugging Face Spaces*). Optionally record a short demo video as a fallback for presentations.

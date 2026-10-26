@@ -6,3 +6,5 @@ __pycache__/
 .DS_Store
 *.backup-*.ipynb
 .claude/launch.json
+dist/
+.pytest_cache/
