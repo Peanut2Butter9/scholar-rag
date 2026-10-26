@@ -36,7 +36,7 @@ Current pipeline: BM25 top 10 ∪ dense top 10, reranked by `bge-reranker-base`;
 | – | Chunk-size experiment (350 / 250 / 180 words) | ✅ keep 350 words |
 | M3 | Hybrid search (RRF) + cross-encoder reranker | ✅ BM25 ∪ dense top 10 → `bge-reranker-base` (level with BM25 on set A, far ahead on set B1) |
 | M4 | Answers with citations and refusal | ✅ Gemini, verified quotes; 20 / 20 unanswerable refused |
-| M5 | Answer evaluation (citations, refusals, cost, latency) | 🔧 in progress: set C and latency done, LLM judge 13 / 79 (free-tier quota) |
+| M5 | Answer evaluation (citations, refusals, cost, latency) | ✅ acceptable 0.92 (A) / 0.93 (B1), 0 incorrect, no hallucinated refusals |
 | M6 | FastAPI + UI, deployment | 🔧 local API + web UI done (`src/app.py`); public deployment pending |
 
 ## Results so far
@@ -130,6 +130,26 @@ Top 5 passages from the final M3 retrieval → Gemini `gemini-3.5-flash-lite` (t
 - **Citations:** 76 of 77 quotes are verbatim (the exception rewrote `√` as LaTeX).
 - **"Cites a gold chunk" undercounts correct answers.** Most of the 12 answers that cite no gold chunk are correct and cite another chunk of the same paper (often the abstract). One (q044) is grounded but incomplete instead of refused, and three differ from a gold answer that was written from a single passage. M5 therefore needs an answer-correctness judgment, not just chunk matching.
 - **Cost:** ≈ 2,600 input and 120 output tokens per question; 1–3 s per LLM call, plus ≈ 3 s of reranking on an M1.
+
+### Answer evaluation (M5)
+
+An LLM judge (`gemini-3.5-flash`, a stronger model than the one that answers) compared every answer with the reference answer and the cited passages; a blind manual sample of 25 answers checks the judge (`05_evaluation.ipynb`, per-question verdicts in `eval/m5_results.csv`).
+
+| Set | n | correct | correct_different | partial | incorrect | refused | Acceptable (judge) | Acceptable (manual labels on the sample) |
+|---|---|---|---|---|---|---|---|---|
+| A, LLM | 64 | 58 | 1 | 4 | **0** | 1 | **0.922** | 0.984 |
+| B1, handwritten | 15 | 13 | 1 | 0 | **0** | 1 | **0.933** | 0.867 |
+
+| Refusal check | n | Refused | Answered, supported | Answered, not supported |
+|---|---|---|---|---|
+| B2 near-miss | 20 | **20** | 0 | 0 |
+| C out of corpus (LLM-generated, unreviewed) | 12 | 10 | 2 | **0** |
+
+- **No answer is wrong.** The four `partial` answers are incomplete (one part of a two-part question, or a device type instead of the model name). The two `correct_different` answers expose narrow references (q046, h009).
+- **No hallucination on unanswerable questions.** The two set C answers come from corpus papers that describe those methods in their related work.
+- **Grounding:** 78 of 79 judged answers make only claims found in their quotes.
+- **Judge vs human:** agreement 0.76 on acceptable-or-not and 0.96 on supported. The judge is stricter about completeness than the human rater, so read 0.922 / 0.933 as the strict figure.
+- **Latency and cost (M1, free tier):** median 3.2 s end to end (rerank 1.7 s, Gemini 1.5 s), p90 7.4 s. $0 on the free tier; at paid-tier prices about $0.001 per answered question.
 
 See [Known limitations](#known-limitations).
 
@@ -247,6 +267,7 @@ Main dependencies: `arxiv`, `pymupdf`, `sentence-transformers`, `rank_bm25`, `sc
 
 ## Known limitations
 
+- **Judge strictness.** The LLM judge and the human rater agree on acceptable-or-not for 19 of 25 sampled answers; most disagreements are incomplete answers that the judge marks `partial` and the human accepts. The completeness rule should be written into both the judge prompt and the labeling guide before the judge is reused.
 - **Gemini model names.** The judge is requested as `gemini-3.5-flash`, which the API currently serves as Gemini 3.6 Flash (seen in the quota error); the answer model is `gemini-3.5-flash-lite`. Free tier: 20 judge requests per day per model, reset at midnight US Pacific time (14:00 WIB until 31 Oct, 15:00 WIB after). Paid tier (checked Oct 2026): 3.6 Flash $0.75 / $3.75 and 3.5 Flash-Lite $0.30 / $2.50 per 1M input / output tokens (output includes thinking tokens).
 - **Question wording bias.** LLM-generated questions share vocabulary with their source passage, so they favour BM25. Results are reported per question source.
 - **Dense truncation.** 22.5% of 350-word chunks exceed the 512-token limit of `bge-small-en-v1.5` (median 471 tokens, ~1.45 tokens/word), so the tail of those chunks is not embedded. Shorter chunks remove this but did not improve dense retrieval.
@@ -259,7 +280,7 @@ Main dependencies: `arxiv`, `pymupdf`, `sentence-transformers`, `rank_bm25`, `sc
 
 ## Next steps
 
-1. **M5:** judge answer correctness against the gold answer and the cited passages (manual sample + LLM judge), allowing "correct but different from gold" when the quote supports it; refusal accuracy on harder unanswerable questions (e.g. the 12 in `unanswerable_candidates.csv`); cost and latency per question.
+1. **Question sets v2:** widen the references for q046 and h009, reword hu017, and split two-part questions (or require both parts explicitly); save as `questions_v2.csv` / `questions_handwritten_v2.csv`.
 2. **Broad questions:**
    - **Query rewriting:** an LLM turns a conversational question into a short search query (e.g. "unsupervised anomaly detection medical images") before retrieval.
    - **Source diversity:** cap retrieved passages at one chunk per paper (or use maximal marginal relevance), so the context covers more papers.
